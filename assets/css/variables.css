@@ -1,0 +1,73 @@
+:root {
+  /* Base — tema claro profesional */
+  --clr-page: #f4f6f9;
+  --clr-surface: #ffffff;
+  --clr-surface-muted: #eef2f6;
+  --clr-ink: #0f172a;
+  --clr-ink-muted: #475569;
+  --clr-ink-subtle: #64748b;
+  --clr-line: rgba(15, 23, 42, 0.08);
+  --clr-line-strong: rgba(15, 23, 42, 0.12);
+
+  /* Compatibilidad con el CSS existente */
+  --clr-black: #f8fafc;
+  --clr-bg: #f1f5f9;
+  --clr-bg2: #e8eef3;
+  --clr-border: var(--clr-line);
+  --clr-white: var(--clr-ink);
+  --clr-text-muted: var(--clr-ink-muted);
+  --clr-text-subtle: var(--clr-ink-subtle);
+
+  --clr-green: #4a8a2f;
+  --clr-green-bright: #5fa338;
+  --clr-blue: #1565b8;
+  --clr-blue-muted: #3d7ab8;
+
+  --font-display: "IBM Plex Sans", system-ui, sans-serif;
+  --font-body: "Source Sans 3", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
+
+  --fs-xs: 0.75rem;
+  --fs-sm: 0.875rem;
+  --fs-base: 1rem;
+  --fs-lg: 1.0625rem;
+  --fs-xl: 1.375rem;
+  --fs-2xl: 1.875rem;
+  --fs-hero: clamp(2rem, 4.5vw, 3rem);
+
+  --fw-semi: 600;
+  --fw-bold: 700;
+  --fw-black: 700;
+
+  --space-1: 0.25rem;
+  --space-2: 0.5rem;
+  --space-3: 0.75rem;
+  --space-4: 1rem;
+  --space-5: 1.25rem;
+  --space-6: 1.5rem;
+  --space-8: 2rem;
+  --space-12: 3rem;
+  --space-16: 4rem;
+  --space-24: 5rem;
+
+  --radius-sm: 0.375rem;
+  --radius-md: 0.5rem;
+  --radius-lg: 0.75rem;
+  --radius-xl: 1rem;
+  --radius-full: 999px;
+
+  --nav-height: 4.5rem;
+  --max-width: min(70rem, calc(100% - 2rem));
+
+  --shadow-sm: 0 1px 2px rgba(15, 23, 42, 0.05);
+  --shadow-md: 0 4px 14px rgba(15, 23, 42, 0.07);
+  --shadow-card: 0 1px 3px rgba(15, 23, 42, 0.06), 0 8px 24px rgba(15, 23, 42, 0.04);
+
+  --ease-out-expo: cubic-bezier(0.22, 1, 0.36, 1);
+  --transition-base: 0.2s ease;
+
+  --z-loader: 1200;
+  --z-progress: 950;
+  --z-nav: 1000;
+  --z-cursor: 1100;
+}

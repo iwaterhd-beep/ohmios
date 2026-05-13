@@ -1,0 +1,15 @@
+# OS
+Thumbs.db
+Desktop.ini
+.DS_Store
+
+# Editor
+*.swp
+*.swo
+*~
+
+# Logs / env (si añades backend)
+.env
+.env.local
+*.log
+node_modules/

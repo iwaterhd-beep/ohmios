@@ -1,0 +1,40 @@
+/* Páginas internas — mismo lenguaje visual que Inicio (home-portada) */
+
+.page-hero {
+  padding: calc(var(--nav-height) + var(--space-12)) 0 var(--space-16);
+  background: linear-gradient(165deg, #f8fafc 0%, #eef2f7 45%, #e8eef5 100%);
+  border-bottom: 1px solid var(--clr-border);
+  text-align: left;
+}
+
+.page-hero::before {
+  background:
+    radial-gradient(ellipse 90% 70% at 12% 18%, rgba(21, 101, 184, 0.07) 0%, transparent 52%),
+    radial-gradient(ellipse 70% 55% at 88% 78%, rgba(74, 138, 47, 0.08) 0%, transparent 50%);
+}
+
+.page-hero-content {
+  text-align: left;
+}
+
+.page-hero .section-label {
+  display: flex;
+  justify-content: flex-start;
+  color: var(--clr-blue);
+  font-weight: var(--fw-semi);
+  letter-spacing: 0.02em;
+}
+
+.page-hero .section-title {
+  font-size: var(--fs-hero);
+  line-height: 1.12;
+  letter-spacing: -0.03em;
+  max-width: 22ch;
+  text-align: left;
+}
+
+.page-hero .section-body {
+  margin-left: 0;
+  margin-right: 0;
+  max-width: 46ch;
+}
