@@ -1,0 +1,10 @@
+{
+  "name": "ohmios-energia",
+  "version": "1.0.0",
+  "private": true,
+  "description": "OHMIOS Energía — Web corporativa premium",
+  "scripts": {
+    "dev": "npx serve -l 3456",
+    "deploy": "vercel --prod"
+  }
+}

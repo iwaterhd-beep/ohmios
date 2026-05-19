@@ -1,0 +1,278 @@
+/* ============================================================
+   OHMIOS ENERGÍA — About Page
+   ============================================================ */
+
+/* ── Shared Page Hero ── */
+.page-hero {
+  position: relative;
+  padding-top: calc(var(--header-height) + var(--space-3xl));
+  padding-bottom: var(--space-3xl);
+  min-height: 50vh;
+  display: flex;
+  align-items: center;
+  overflow: hidden;
+  background: var(--color-black);
+}
+
+.page-hero::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: var(--gradient-radial-glow);
+  pointer-events: none;
+}
+
+.page-hero .grid-bg {
+  opacity: 0.5;
+}
+
+.page-hero__content {
+  position: relative;
+  z-index: 1;
+  max-width: 800px;
+}
+
+.page-hero__title {
+  margin-bottom: var(--space-lg);
+}
+
+.page-hero__breadcrumb {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-xs);
+  color: var(--color-gray-600);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  margin-bottom: var(--space-lg);
+}
+
+.page-hero__breadcrumb a:hover {
+  color: var(--color-electric);
+}
+
+.page-hero__breadcrumb span {
+  color: var(--color-gray-600);
+}
+
+/* ── About Intro ── */
+.about-page-intro {
+  background: var(--color-graphite);
+}
+
+.about-page-intro__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.about-page-intro__text p {
+  color: var(--color-gray-400);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.about-page-intro__visual {
+  position: relative;
+}
+
+.about-page-intro__image {
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+}
+
+.about-page-intro__image img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.about-page-intro__frame {
+  position: absolute;
+  top: -16px;
+  right: -16px;
+  width: 100%;
+  height: 100%;
+  border: 1px solid rgba(0, 174, 239, 0.2);
+  border-radius: var(--radius-lg);
+  pointer-events: none;
+}
+
+/* ── Mission Cards ── */
+.about-mission__grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: var(--space-lg);
+}
+
+.mission-card {
+  padding: var(--space-xl);
+  background: var(--color-dark);
+  border: var(--border-subtle);
+  border-radius: var(--radius-lg);
+  transition: transform var(--duration-base) var(--ease-out-expo),
+              border-color var(--duration-base) var(--ease-out-expo);
+}
+
+.mission-card:hover {
+  transform: translateY(-4px);
+  border-color: rgba(0, 174, 239, 0.2);
+}
+
+.mission-card__icon {
+  width: 48px;
+  height: 48px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(0, 174, 239, 0.08);
+  border-radius: var(--radius-md);
+  color: var(--color-electric);
+  margin-bottom: var(--space-lg);
+}
+
+.mission-card__icon svg {
+  width: 24px;
+  height: 24px;
+}
+
+.mission-card__title {
+  font-size: var(--text-lg);
+  margin-bottom: var(--space-sm);
+}
+
+.mission-card__desc {
+  font-size: var(--text-sm);
+  color: var(--color-gray-500);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Timeline ── */
+.about-timeline {
+  background: var(--color-black);
+}
+
+.about-timeline__track {
+  position: relative;
+  max-width: 700px;
+  margin-inline: auto;
+  padding-left: var(--space-2xl);
+}
+
+.about-timeline__track::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 1px;
+  background: linear-gradient(180deg, var(--color-electric), var(--color-energy), transparent);
+}
+
+.timeline-item {
+  position: relative;
+  padding-bottom: var(--space-2xl);
+}
+
+.timeline-item:last-child {
+  padding-bottom: 0;
+}
+
+.timeline-item::before {
+  content: '';
+  position: absolute;
+  left: calc(var(--space-2xl) * -1 - 4px);
+  top: 6px;
+  width: 9px;
+  height: 9px;
+  background: var(--color-electric);
+  border-radius: 50%;
+  box-shadow: 0 0 12px rgba(0, 174, 239, 0.5);
+}
+
+.timeline-item__year {
+  font-family: var(--font-heading);
+  font-size: var(--text-sm);
+  font-weight: 600;
+  color: var(--color-electric);
+  letter-spacing: var(--tracking-wide);
+  margin-bottom: var(--space-xs);
+}
+
+.timeline-item__title {
+  font-size: var(--text-xl);
+  margin-bottom: var(--space-sm);
+}
+
+.timeline-item__desc {
+  font-size: var(--text-sm);
+  color: var(--color-gray-500);
+  line-height: var(--leading-relaxed);
+}
+
+/* ── Stats Banner ── */
+.about-stats-banner {
+  background: var(--color-graphite);
+  border-block: var(--border-subtle);
+}
+
+.about-stats-banner__grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: var(--space-lg);
+  text-align: center;
+}
+
+.about-stats-banner__item {
+  padding: var(--space-xl);
+}
+
+.about-stats-banner__number {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-4xl);
+  font-weight: 700;
+  color: var(--color-off-white);
+  margin-bottom: var(--space-xs);
+}
+
+.about-stats-banner__number span {
+  color: var(--color-electric);
+}
+
+.about-stats-banner__label {
+  font-size: var(--text-xs);
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-gray-500);
+}
+
+/* ── Page CTA Strip ── */
+.page-cta {
+  background: var(--color-dark);
+  text-align: center;
+}
+
+.page-cta__inner {
+  max-width: 600px;
+  margin-inline: auto;
+}
+
+.page-cta__title {
+  margin-bottom: var(--space-md);
+}
+
+.page-cta__text {
+  color: var(--color-gray-400);
+  margin-bottom: var(--space-xl);
+  margin-inline: auto;
+}
+
+.page-cta__actions {
+  display: flex;
+  justify-content: center;
+  gap: var(--space-md);
+  flex-wrap: wrap;
+}

@@ -1,0 +1,141 @@
+/**
+ * OHMIOS ENERGÍA — Main Entry Point
+ * Initializes all modules and loads HTML components
+ */
+
+import { initNavbar } from './navbar.js';
+import { initCursor } from './cursor.js';
+import { initScrollEffects } from './scroll-effects.js';
+import { initAnimations } from './animations.js';
+import { initProjects } from './projects.js';
+import { initForm } from './form.js';
+
+/**
+ * Load HTML component into a placeholder element
+ */
+async function loadComponent(placeholderId, componentPath) {
+  const placeholder = document.getElementById(placeholderId);
+  if (!placeholder) return;
+
+  try {
+    const response = await fetch(componentPath);
+    if (!response.ok) throw new Error(`Failed to load ${componentPath}`);
+    const html = await response.text();
+    placeholder.outerHTML = html;
+  } catch (error) {
+    console.warn(`Component load failed: ${componentPath}`, error);
+  }
+}
+
+/**
+ * Set active nav link based on current page
+ */
+function setActiveNavLink() {
+  const currentPage = window.location.pathname.split('/').pop().replace('.html', '') || 'index';
+  const pageKey = currentPage === 'index' || currentPage === '' ? 'index' : currentPage;
+
+  document.querySelectorAll('.nav__link[data-page]').forEach(link => {
+    if (link.dataset.page === pageKey) {
+      link.classList.add('nav__link--active');
+    }
+  });
+}
+
+/**
+ * Initialize Lenis smooth scroll
+ */
+function initLenis() {
+  if (typeof Lenis === 'undefined') return null;
+
+  const lenis = new Lenis({
+    duration: 1.2,
+    easing: (t) => Math.min(1, 1.001 - Math.pow(2, -10 * t)),
+    orientation: 'vertical',
+    smoothWheel: true,
+  });
+
+  lenis.on('scroll', ScrollTrigger.update);
+
+  gsap.ticker.add((time) => {
+    lenis.raf(time * 1000);
+  });
+
+  gsap.ticker.lagSmoothing(0);
+
+  return lenis;
+}
+
+/**
+ * Highlight active service nav link on scroll
+ */
+function initServicesNav() {
+  const navLinks = document.querySelectorAll('.services-nav__link');
+  const sections = document.querySelectorAll('.service-detail[id]');
+
+  if (navLinks.length === 0 || sections.length === 0) return;
+
+  const observer = new IntersectionObserver(
+    (entries) => {
+      entries.forEach((entry) => {
+        if (entry.isIntersecting) {
+          const id = entry.target.id;
+          navLinks.forEach((link) => {
+            link.classList.toggle('is-active', link.getAttribute('href') === `#${id}`);
+          });
+        }
+      });
+    },
+    { rootMargin: '-40% 0px -55% 0px' }
+  );
+
+  sections.forEach((section) => observer.observe(section));
+}
+
+/**
+ * Main initialization
+ */
+async function init() {
+  // Load shared components
+  await loadComponent('header-placeholder', 'components/header.html');
+
+  // Home page sections
+  const isHome = document.getElementById('hero-placeholder');
+  if (isHome) {
+    await loadComponent('hero-placeholder', 'components/hero.html');
+    await loadComponent('about-placeholder', 'components/about.html');
+    await loadComponent('services-placeholder', 'components/services.html');
+    await loadComponent('projects-placeholder', 'components/projects-preview.html');
+    await loadComponent('values-placeholder', 'components/values.html');
+    await loadComponent('cta-placeholder', 'components/cta.html');
+  }
+
+  await loadComponent('footer-placeholder', 'components/footer.html');
+
+  // Register GSAP plugins
+  if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
+    gsap.registerPlugin(ScrollTrigger);
+  }
+
+  // Initialize smooth scroll
+  const lenis = initLenis();
+
+  // Initialize modules
+  initNavbar();
+  initCursor();
+  initScrollEffects(lenis);
+  initAnimations();
+  initProjects();
+  initForm();
+  initServicesNav();
+  setActiveNavLink();
+
+  // Remove loading state
+  document.body.classList.add('is-loaded');
+}
+
+// Run when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

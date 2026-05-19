@@ -1,0 +1,72 @@
+<!-- ============================================================
+     OHMIOS ENERGÍA — Header Component
+     ============================================================ -->
+<header class="header" id="header" role="banner">
+  <div class="header__inner">
+
+    <!-- Logo -->
+    <a href="index.html" class="header__logo" aria-label="OHMIOS Energía - Inicio">
+      <div class="header__logo-mark">
+        <svg viewBox="0 0 40 40" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+          <rect width="40" height="40" rx="8" fill="url(#logoGrad)"/>
+          <path d="M12 28V12h4.5l3.5 9.5L23.5 12H28v16h-3.5V18.5L21 28h-2L15.5 18.5V28H12z" fill="#0B0B0B"/>
+          <defs>
+            <linearGradient id="logoGrad" x1="0" y1="0" x2="40" y2="40">
+              <stop stop-color="#00AEEF"/>
+              <stop offset="1" stop-color="#00D084"/>
+            </linearGradient>
+          </defs>
+        </svg>
+      </div>
+      <div class="header__logo-text">
+        <span class="header__logo-name">OHMIOS</span>
+        <span class="header__logo-tagline">Energía</span>
+      </div>
+    </a>
+
+    <!-- Navigation -->
+    <nav class="nav" role="navigation" aria-label="Navegación principal">
+      <ul class="nav__list">
+        <li><a href="index.html" class="nav__link" data-page="index">Inicio</a></li>
+        <li><a href="sobre-nosotros.html" class="nav__link" data-page="sobre-nosotros">Nosotros</a></li>
+        <li><a href="servicios.html" class="nav__link" data-page="servicios">Servicios</a></li>
+        <li><a href="proyectos.html" class="nav__link" data-page="proyectos">Proyectos</a></li>
+        <li><a href="contacto.html" class="nav__link" data-page="contacto">Contacto</a></li>
+      </ul>
+      <a href="contacto.html" class="btn btn--primary nav__cta">Solicitar presupuesto</a>
+
+      <!-- Mobile Toggle -->
+      <button class="nav__toggle" id="navToggle" aria-label="Abrir menú" aria-expanded="false">
+        <span class="nav__toggle-line"></span>
+        <span class="nav__toggle-line"></span>
+        <span class="nav__toggle-line"></span>
+      </button>
+    </nav>
+
+    <!-- Mobile Overlay -->
+    <div class="nav__overlay" id="navOverlay" aria-hidden="true">
+      <ul class="nav__list">
+        <li><a href="index.html" class="nav__link" data-page="index">Inicio</a></li>
+        <li><a href="sobre-nosotros.html" class="nav__link" data-page="sobre-nosotros">Nosotros</a></li>
+        <li><a href="servicios.html" class="nav__link" data-page="servicios">Servicios</a></li>
+        <li><a href="proyectos.html" class="nav__link" data-page="proyectos">Proyectos</a></li>
+        <li><a href="contacto.html" class="nav__link" data-page="contacto">Contacto</a></li>
+      </ul>
+      <a href="contacto.html" class="btn btn--primary">Solicitar presupuesto</a>
+      <div class="nav__overlay-contact">
+        <p><a href="tel:+34633968578">+34 633 968 578</a></p>
+        <p><a href="mailto:instalaciones.ohmios@gmail.com">instalaciones.ohmios@gmail.com</a></p>
+      </div>
+    </div>
+
+  </div>
+</header>
+
+<!-- Custom Cursor -->
+<div class="cursor" id="cursor" aria-hidden="true"></div>
+<div class="cursor-follower" id="cursorFollower" aria-hidden="true"></div>
+
+<!-- Scroll Progress -->
+<div class="scroll-progress" aria-hidden="true">
+  <div class="scroll-progress__bar" id="scrollProgressBar"></div>
+</div>

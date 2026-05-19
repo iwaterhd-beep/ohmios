@@ -1,0 +1,188 @@
+/* ============================================================
+   OHMIOS ENERGÍA — Services Page
+   ============================================================ */
+
+@import url('about.css');
+
+/* ── Services Nav ── */
+.services-nav {
+  position: sticky;
+  top: var(--header-height);
+  z-index: var(--z-dropdown);
+  background: rgba(11, 11, 11, 0.9);
+  backdrop-filter: blur(var(--glass-blur));
+  border-bottom: var(--border-subtle);
+  padding-block: var(--space-md);
+}
+
+.services-nav__list {
+  display: flex;
+  gap: var(--space-sm);
+  overflow-x: auto;
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.services-nav__list::-webkit-scrollbar {
+  display: none;
+}
+
+.services-nav__link {
+  flex-shrink: 0;
+  padding: 0.5rem 1rem;
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 500;
+  letter-spacing: var(--tracking-wide);
+  text-transform: uppercase;
+  color: var(--color-gray-500);
+  border: var(--border-subtle);
+  border-radius: var(--radius-full);
+  transition: all var(--duration-base) var(--ease-out-expo);
+  white-space: nowrap;
+}
+
+.services-nav__link:hover,
+.services-nav__link.is-active {
+  color: var(--color-off-white);
+  border-color: rgba(0, 174, 239, 0.3);
+  background: rgba(0, 174, 239, 0.05);
+}
+
+/* ── Service Detail Block ── */
+.service-detail {
+  position: relative;
+  overflow: hidden;
+}
+
+.service-detail:nth-child(even) {
+  background: var(--color-graphite);
+}
+
+.service-detail:nth-child(odd) {
+  background: var(--color-black);
+}
+
+.service-detail__grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-3xl);
+  align-items: center;
+}
+
+.service-detail--reverse .service-detail__grid {
+  direction: rtl;
+}
+
+.service-detail--reverse .service-detail__grid > * {
+  direction: ltr;
+}
+
+.service-detail__visual {
+  position: relative;
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+  aspect-ratio: 4 / 3;
+}
+
+.service-detail__visual img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform var(--duration-slow) var(--ease-out-expo);
+}
+
+.service-detail:hover .service-detail__visual img {
+  transform: scale(1.03);
+}
+
+.service-detail__number {
+  position: absolute;
+  top: var(--space-lg);
+  left: var(--space-lg);
+  font-family: var(--font-heading);
+  font-size: var(--text-5xl);
+  font-weight: 700;
+  color: rgba(255, 255, 255, 0.08);
+  line-height: 1;
+}
+
+.service-detail__label {
+  margin-bottom: var(--space-md);
+}
+
+.service-detail__title {
+  margin-bottom: var(--space-lg);
+}
+
+.service-detail__desc {
+  color: var(--color-gray-400);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-xl);
+}
+
+.service-detail__benefits {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--space-sm);
+  margin-bottom: var(--space-xl);
+}
+
+.service-detail__benefit {
+  display: flex;
+  align-items: center;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-gray-400);
+}
+
+.service-detail__benefit svg {
+  width: 16px;
+  height: 16px;
+  color: var(--color-energy);
+  flex-shrink: 0;
+}
+
+/* ── Process Steps ── */
+.service-detail__process {
+  margin-bottom: var(--space-xl);
+}
+
+.service-detail__process-title {
+  font-family: var(--font-heading);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  letter-spacing: var(--tracking-wider);
+  text-transform: uppercase;
+  color: var(--color-gray-500);
+  margin-bottom: var(--space-md);
+}
+
+.process-steps {
+  display: flex;
+  gap: var(--space-md);
+}
+
+.process-step {
+  flex: 1;
+  padding: var(--space-md);
+  background: rgba(255, 255, 255, 0.02);
+  border: var(--border-subtle);
+  border-radius: var(--radius-md);
+  text-align: center;
+}
+
+.process-step__num {
+  display: block;
+  font-family: var(--font-heading);
+  font-size: var(--text-lg);
+  font-weight: 700;
+  color: var(--color-electric);
+  margin-bottom: var(--space-xs);
+}
+
+.process-step__text {
+  font-size: var(--text-xs);
+  color: var(--color-gray-500);
+  line-height: var(--leading-snug);
+}

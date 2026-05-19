@@ -1,0 +1,303 @@
+/* ============================================================
+   OHMIOS ENERGÍA — Responsive Design
+   ============================================================ */
+
+/* ── Large Desktop (1600px+) ── */
+@media (min-width: 1600px) {
+  :root {
+    --section-padding: clamp(8rem, 12vw, 14rem);
+  }
+}
+
+/* ── Laptop (1024px - 1279px) ── */
+@media (max-width: 1279px) {
+  .footer__grid {
+    grid-template-columns: 1.5fr 1fr 1fr;
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+    max-width: 100%;
+  }
+}
+
+/* ── Tablet (768px - 1023px) ── */
+@media (max-width: 1023px) {
+  :root {
+    --header-height: 70px;
+  }
+
+  .nav__list,
+  .nav__cta {
+    display: none;
+  }
+
+  .nav__toggle {
+    display: flex;
+  }
+
+  .nav__overlay {
+    display: flex;
+  }
+
+  .hero__stats {
+    gap: var(--space-xl);
+  }
+
+  .hero__float {
+    display: none;
+  }
+
+  .about__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+  }
+
+  .about__badge {
+    right: var(--space-md);
+  }
+
+  .services__header {
+    grid-template-columns: 1fr;
+    gap: var(--space-lg);
+  }
+
+  .services__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .values__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .value-card--wide {
+    grid-column: span 2;
+  }
+
+  .projects-preview__header {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-xl);
+  }
+
+  .footer__brand {
+    grid-column: 1 / -1;
+  }
+
+  /* Internal pages — tablet */
+  .about-page-intro__grid,
+  .service-detail__grid,
+  .contact-page__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-2xl);
+  }
+
+  .service-detail--reverse .service-detail__grid {
+    direction: ltr;
+  }
+
+  .about-mission__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .about-stats-banner__grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+
+  .projects-page__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .contact-faq__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .process-steps {
+    flex-wrap: wrap;
+  }
+
+  .process-step {
+    flex: 1 1 calc(50% - var(--space-md));
+  }
+}
+
+/* ── Mobile (max 767px) ── */
+@media (max-width: 767px) {
+  body {
+    cursor: auto;
+  }
+
+  .cursor,
+  .cursor-follower {
+    display: none;
+  }
+
+  button {
+    cursor: pointer;
+  }
+
+  .hero {
+    min-height: 100svh;
+  }
+
+  .hero__title {
+    max-width: 100%;
+  }
+
+  .hero__actions {
+    flex-direction: column;
+  }
+
+  .hero__actions .btn {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .hero__stats {
+    flex-direction: column;
+    gap: var(--space-lg);
+  }
+
+  .hero__scroll {
+    display: none;
+  }
+
+  .hero__marquee {
+    display: none;
+  }
+
+  .about__stats {
+    grid-template-columns: 1fr;
+  }
+
+  .about__badge {
+    position: relative;
+    bottom: auto;
+    right: auto;
+    margin-top: var(--space-md);
+  }
+
+  .services__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .projects-preview__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .project-card {
+    grid-template-columns: 1fr;
+  }
+
+  .project-card__image {
+    min-height: 220px;
+  }
+
+  .values__grid {
+    grid-template-columns: 1fr;
+  }
+
+  .value-card--wide {
+    grid-column: span 1;
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .cta__actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .cta__actions .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .cta__contact-row {
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-md);
+  }
+
+  /* Internal pages — mobile */
+  .about-stats-banner__grid {
+    grid-template-columns: 1fr 1fr;
+  }
+
+  .service-detail__benefits {
+    grid-template-columns: 1fr;
+  }
+
+  .process-step {
+    flex: 1 1 100%;
+  }
+
+  .form-row {
+    flex-direction: column;
+  }
+
+  .project-modal__details {
+    grid-template-columns: 1fr;
+  }
+
+  .page-cta__actions {
+    flex-direction: column;
+    align-items: center;
+  }
+
+  .page-cta__actions .btn {
+    width: 100%;
+    max-width: 320px;
+  }
+
+  .footer__grid {
+    grid-template-columns: 1fr;
+    gap: var(--space-xl);
+  }
+
+  .footer__bottom {
+    flex-direction: column;
+    gap: var(--space-md);
+    text-align: center;
+  }
+
+  .footer__legal {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+}
+
+/* ── Small Mobile (max 374px) ── */
+@media (max-width: 374px) {
+  .hero__badge {
+    font-size: 0.625rem;
+  }
+}
+
+/* ── Touch Devices ── */
+@media (hover: none) and (pointer: coarse) {
+  body {
+    cursor: auto;
+  }
+
+  .cursor,
+  .cursor-follower {
+    display: none;
+  }
+
+  button,
+  a {
+    cursor: pointer;
+  }
+}
+
+/* ── Ultra Wide (1920px+) ── */
+@media (min-width: 1920px) {
+  .hero__content .container {
+    padding-left: calc((100vw - var(--container-max)) / 2 + clamp(1.25rem, 4vw, 3rem));
+  }
+}
