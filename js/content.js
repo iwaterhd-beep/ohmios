@@ -3,7 +3,8 @@
  * Carga JSON del CMS y actualiza la web
  */
 
-import { isVideoUrl } from './media-utils.js';
+import { isVideoUrl, resolveHeroMedia, bustMediaCache } from './media-utils.js';
+import { initHeroVideo } from './preloader.js';
 
 const ICONS = {
   electrico: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
@@ -78,53 +79,7 @@ async function fetchJSON(path) {
 
   if (!data && repo) return repo;
   if (!data) throw new Error(`Failed ${path}`);
-  if (name === 'home' && repo) return mergeHomeMediaFromRepo(data, repo);
   return data;
-}
-
-function isRemoteMedia(url) {
-  return typeof url === 'string' && /^https?:\/\//i.test(url);
-}
-
-function isLocalMedia(url) {
-  return typeof url === 'string' && url.startsWith('/');
-}
-
-/** Usa media local del repo si Supabase aún tiene URLs externas antiguas */
-function mergeHomeMediaFromRepo(data, repo) {
-  const merged = { ...data };
-
-  if (merged.hero && repo.hero) {
-    const hero = { ...merged.hero };
-    if (isRemoteMedia(hero.videoUrl) && isLocalMedia(repo.hero.videoUrl)) {
-      hero.videoUrl = repo.hero.videoUrl;
-    }
-    if (!hero.posterUrl?.trim() && repo.hero.posterUrl) {
-      hero.posterUrl = repo.hero.posterUrl;
-    } else if (isRemoteMedia(hero.posterUrl) && isLocalMedia(repo.hero.posterUrl)) {
-      hero.posterUrl = repo.hero.posterUrl;
-    }
-    merged.hero = hero;
-  }
-
-  if (merged.about && repo.about) {
-    const about = { ...merged.about };
-    if (isRemoteMedia(about.image) && isLocalMedia(repo.about.image)) {
-      about.image = repo.about.image;
-      about.imageAlt = repo.about.imageAlt || about.imageAlt;
-    }
-    merged.about = about;
-  }
-
-  if (merged.cta && repo.cta) {
-    const cta = { ...merged.cta };
-    if (isRemoteMedia(cta.backgroundImage) && isLocalMedia(repo.cta.backgroundImage)) {
-      cta.backgroundImage = repo.cta.backgroundImage;
-    }
-    merged.cta = cta;
-  }
-
-  return merged;
 }
 
 function mediaElementHTML(url, alt, className = '') {
@@ -205,24 +160,8 @@ function applyHero(hero) {
   const subtitle = section.querySelector('.hero__subtitle');
   if (subtitle) subtitle.textContent = hero.subtitle;
 
-  const videoEl = section.querySelector('.hero__video');
-  const source = videoEl?.querySelector('source');
-  if (videoEl && hero.videoUrl) {
-    if (source) {
-      source.src = hero.videoUrl;
-      source.type = 'video/mp4';
-    } else {
-      videoEl.src = hero.videoUrl;
-    }
-    videoEl.load();
-  }
-  const fallback = section.querySelector('.hero__image--fallback');
-  if (videoEl && hero.posterUrl && !isVideoUrl(hero.posterUrl)) {
-    videoEl.poster = hero.posterUrl;
-  }
-  if (fallback && hero.posterUrl && !isVideoUrl(hero.posterUrl)) {
-    fallback.src = hero.posterUrl;
-  }
+  applyHeroMedia(hero);
+  initHeroVideo();
 
   const stats = section.querySelectorAll('.hero__stat');
   hero.stats?.forEach((stat, i) => {
@@ -234,6 +173,56 @@ function applyHero(hero) {
     const label = stats[i]?.querySelector('.hero__stat-label');
     if (label) label.textContent = stat.label;
   });
+}
+
+function applyHeroMedia(hero) {
+  const media = document.querySelector('.hero__media');
+  if (!media) return;
+
+  const { mode, videoSrc, posterSrc } = resolveHeroMedia(hero);
+  media.classList.remove('is-video-active');
+  media.innerHTML = '';
+
+  if (mode === 'video') {
+    const video = document.createElement('video');
+    video.className = 'hero__video';
+    video.dataset.heroMode = 'video';
+    video.muted = true;
+    video.defaultMuted = true;
+    video.loop = true;
+    video.playsInline = true;
+    video.autoplay = true;
+    video.preload = 'auto';
+    video.setAttribute('aria-hidden', 'true');
+    video.src = bustMediaCache(videoSrc);
+
+    if (posterSrc) {
+      video.poster = bustMediaCache(posterSrc);
+      const fallback = document.createElement('img');
+      fallback.className = 'hero__image hero__image--fallback';
+      fallback.src = bustMediaCache(posterSrc);
+      fallback.alt = '';
+      fallback.loading = 'eager';
+      fallback.fetchPriority = 'high';
+      fallback.setAttribute('aria-hidden', 'true');
+      media.appendChild(fallback);
+    }
+
+    media.appendChild(video);
+    return;
+  }
+
+  if (mode === 'image') {
+    const img = document.createElement('img');
+    img.className = 'hero__image hero__image--fallback';
+    img.dataset.heroMode = 'image';
+    img.src = bustMediaCache(posterSrc);
+    img.alt = '';
+    img.loading = 'eager';
+    img.fetchPriority = 'high';
+    img.setAttribute('aria-hidden', 'true');
+    media.appendChild(img);
+  }
 }
 
 function applyAbout(about) {
@@ -252,7 +241,8 @@ function applyAbout(about) {
   const wrapper = section.querySelector('.about__image-wrapper');
   if (wrapper && about.image) {
     const overlay = '<div class="about__image-overlay" aria-hidden="true"></div>';
-    wrapper.innerHTML = mediaElementHTML(about.image, about.imageAlt || '', 'about__image') + overlay;
+    wrapper.innerHTML = mediaElementHTML(bustMediaCache(about.image), about.imageAlt || '', 'about__image') + overlay;
+    wrapper.querySelector('video')?.play().catch(() => {});
   }
 
   const badgeNum = section.querySelector('.about__badge-number');
@@ -403,7 +393,7 @@ function applyCta(cta) {
     if (isVideoUrl(cta.backgroundImage)) {
       const video = document.createElement('video');
       video.className = 'cta__bg-video';
-      video.src = cta.backgroundImage;
+      video.src = bustMediaCache(cta.backgroundImage);
       video.muted = true;
       video.loop = true;
       video.playsInline = true;
@@ -414,7 +404,7 @@ function applyCta(cta) {
     } else {
       const img = document.createElement('img');
       img.className = 'cta__bg-image';
-      img.src = cta.backgroundImage;
+      img.src = bustMediaCache(cta.backgroundImage);
       img.alt = '';
       img.loading = 'lazy';
       bg.insertBefore(img, overlay);

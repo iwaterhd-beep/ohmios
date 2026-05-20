@@ -43,9 +43,13 @@
   display: block;
 }
 
-.hero__video[style*="display: none"] ~ .hero__image--fallback,
-.hero__media:not(:has(.hero__video:not([style*="display: none"]))) .hero__image--fallback {
-  z-index: 1;
+.hero__media.is-video-active .hero__video {
+  opacity: 1;
+}
+
+.hero__image--fallback[style*="display: none"] {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .hero__overlay {

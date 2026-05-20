@@ -4,7 +4,60 @@
 
 export function isVideoUrl(url) {
   if (!url) return false;
-  return /\.(mp4|webm|mov|m4v|ogg)(\?|#|$)/i.test(url) || /\/video\//i.test(url);
+  return /\.(mp4|webm|mov|m4v|ogg)(\?|#|$)/i.test(url) || /\/videos?\//i.test(url);
+}
+
+/** Separa vídeo de fondo e imagen poster según lo guardado en el CMS */
+export function resolveHeroMedia(hero = {}) {
+  const videoUrl = hero.videoUrl?.trim() || '';
+  const posterUrl = hero.posterUrl?.trim() || '';
+
+  if (isVideoUrl(videoUrl)) {
+    return {
+      mode: 'video',
+      videoSrc: videoUrl,
+      posterSrc: posterUrl && !isVideoUrl(posterUrl) ? posterUrl : '',
+    };
+  }
+
+  if (isVideoUrl(posterUrl)) {
+    return {
+      mode: 'video',
+      videoSrc: posterUrl,
+      posterSrc: '',
+    };
+  }
+
+  if (posterUrl) {
+    return { mode: 'image', videoSrc: '', posterSrc: posterUrl };
+  }
+
+  if (videoUrl) {
+    return { mode: 'image', videoSrc: '', posterSrc: videoUrl };
+  }
+
+  return { mode: 'none', videoSrc: '', posterSrc: '' };
+}
+
+export function normalizeHeroMedia(hero = {}) {
+  const next = { ...hero };
+  const videoUrl = next.videoUrl?.trim() || '';
+  const posterUrl = next.posterUrl?.trim() || '';
+
+  if (isVideoUrl(posterUrl) && !videoUrl) {
+    next.videoUrl = posterUrl;
+    next.posterUrl = '';
+  } else if (isVideoUrl(posterUrl) && isVideoUrl(videoUrl) && posterUrl === videoUrl) {
+    next.posterUrl = '';
+  }
+
+  return next;
+}
+
+export function bustMediaCache(url) {
+  if (!url || url.startsWith('data:')) return url;
+  const base = url.split('?')[0];
+  return `${base}?cms=${Date.now()}`;
 }
 
 export function isVideoMime(mime) {

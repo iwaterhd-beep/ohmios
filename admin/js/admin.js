@@ -143,53 +143,7 @@ async function loadJSON(name) {
 
   if (!data && repo) return repo;
   if (!data) throw new Error(`No se pudo cargar ${name}.json`);
-
-  if (name === 'home' && repo) return mergeHomeMediaFromRepo(data, repo);
   return data;
-}
-
-function isRemoteMedia(url) {
-  return typeof url === 'string' && /^https?:\/\//i.test(url);
-}
-
-function isLocalMedia(url) {
-  return typeof url === 'string' && url.startsWith('/');
-}
-
-function mergeHomeMediaFromRepo(data, repo) {
-  const merged = { ...data };
-
-  if (merged.hero && repo.hero) {
-    const hero = { ...merged.hero };
-    if (isRemoteMedia(hero.videoUrl) && isLocalMedia(repo.hero.videoUrl)) {
-      hero.videoUrl = repo.hero.videoUrl;
-    }
-    if (!hero.posterUrl?.trim() && repo.hero.posterUrl) {
-      hero.posterUrl = repo.hero.posterUrl;
-    } else if (isRemoteMedia(hero.posterUrl) && isLocalMedia(repo.hero.posterUrl)) {
-      hero.posterUrl = repo.hero.posterUrl;
-    }
-    merged.hero = hero;
-  }
-
-  if (merged.about && repo.about) {
-    const about = { ...merged.about };
-    if (isRemoteMedia(about.image) && isLocalMedia(repo.about.image)) {
-      about.image = repo.about.image;
-      about.imageAlt = repo.about.imageAlt || about.imageAlt;
-    }
-    merged.about = about;
-  }
-
-  if (merged.cta && repo.cta) {
-    const cta = { ...merged.cta };
-    if (isRemoteMedia(cta.backgroundImage) && isLocalMedia(repo.cta.backgroundImage)) {
-      cta.backgroundImage = repo.cta.backgroundImage;
-    }
-    merged.cta = cta;
-  }
-
-  return merged;
 }
 
 if (getToken()) {
@@ -351,8 +305,8 @@ function renderHome() {
         ${field('Título línea 3', 'hero.titleLines.2', hero.titleLines[2])}
         ${field('Título línea 4', 'hero.titleLines.3', hero.titleLines[3])}
         ${field('Subtítulo', 'hero.subtitle', hero.subtitle, 'textarea', true)}
-        ${mediaField('Vídeo hero (fondo)', 'hero.videoUrl', hero.videoUrl)}
-        ${mediaField('Poster / imagen hero', 'hero.posterUrl', hero.posterUrl)}
+        ${mediaField('Vídeo de fondo', 'hero.videoUrl', hero.videoUrl)}
+        ${mediaField('Imagen de respaldo (opcional, solo JPG/PNG)', 'hero.posterUrl', hero.posterUrl)}
       </div>
     </div>
     <div class="admin-card">
@@ -670,6 +624,18 @@ function collectSettings() {
   s.gaId = val('gaId');
 }
 
+function normalizeHeroFields(hero) {
+  const videoUrl = hero.videoUrl?.trim() || '';
+  const posterUrl = hero.posterUrl?.trim() || '';
+
+  if (isVideoUrl(posterUrl) && !videoUrl) {
+    hero.videoUrl = posterUrl;
+    hero.posterUrl = '';
+  } else if (isVideoUrl(posterUrl) && isVideoUrl(videoUrl) && posterUrl === videoUrl) {
+    hero.posterUrl = '';
+  }
+}
+
 function collectHome() {
   const h = state.home;
   h.hero.badge = val('hero.badge');
@@ -677,6 +643,7 @@ function collectHome() {
   h.hero.subtitle = val('hero.subtitle');
   h.hero.videoUrl = val('hero.videoUrl');
   h.hero.posterUrl = val('hero.posterUrl');
+  normalizeHeroFields(h.hero);
   h.hero.stats.forEach((_, i) => {
     h.hero.stats[i].number = parseInt(val(`hero.stats.${i}.number`), 10) || 0;
     h.hero.stats[i].suffix = val(`hero.stats.${i}.suffix`);
