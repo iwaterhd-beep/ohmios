@@ -378,7 +378,36 @@ function projectItemHTML(p) {
 }
 
 function applyServicesPage(servicesData) {
-  /* Página servicios mantiene HTML estático; el panel edita services.json para la home */
+  const items = servicesData?.services;
+  if (!items?.length) return;
+
+  const navList = document.querySelector('.services-nav__list');
+  if (navList) {
+    navList.innerHTML = items.map((s) =>
+      `<li><a href="#${esc(s.id)}" class="services-nav__link">${esc(s.navLabel || s.title)}</a></li>`
+    ).join('');
+  }
+
+  items.forEach((s) => {
+    const section = document.getElementById(s.id);
+    if (!section) return;
+
+    const visual = section.querySelector('.service-detail__visual');
+    if (visual && s.image) {
+      visual.innerHTML = `
+        <span class="service-detail__number">${esc(s.number)}</span>
+        ${mediaElementHTML(s.image, s.title)}`;
+    } else {
+      const numberEl = section.querySelector('.service-detail__number');
+      if (numberEl) numberEl.textContent = s.number;
+    }
+
+    const titleEl = section.querySelector('.service-detail__title');
+    if (titleEl) titleEl.textContent = s.title;
+
+    const descEl = section.querySelector('.service-detail__desc');
+    if (descEl && s.pageDescription) descEl.textContent = s.pageDescription;
+  });
 }
 
 const MISSION_ICONS = [

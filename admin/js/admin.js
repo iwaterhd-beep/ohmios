@@ -429,10 +429,12 @@ function serviceItemHTML(s, i) {
       </div>
       <div class="admin-grid">
         ${field('ID (slug)', `svc.${i}.id`, s.id)}
+        ${field('Etiqueta nav', `svc.${i}.navLabel`, s.navLabel || s.title)}
         ${field('Título', `svc.${i}.title`, s.title)}
         ${field('Número', `svc.${i}.number`, s.number)}
         ${field('Descripción', `svc.${i}.description`, s.description, 'textarea', true)}
         ${field('Enlace', `svc.${i}.link`, s.link)}
+        ${mediaField('Imagen o vídeo', `svc.${i}.image`, s.image || '')}
       </div>
     </div>`;
 }
@@ -444,9 +446,11 @@ function bindServiceActions() {
     state.services.services.push({
       id: `servicio-${Date.now()}`,
       number: String(n).padStart(2, '0'),
+      navLabel: 'Nuevo servicio',
       title: 'Nuevo servicio',
       description: '',
       link: 'servicios.html',
+      image: '',
       featured: true,
     });
     renderServices();
@@ -659,10 +663,12 @@ function collectNosotros() {
 function collectServices() {
   state.services.services.forEach((s, i) => {
     s.id = val(`svc.${i}.id`);
+    s.navLabel = val(`svc.${i}.navLabel`);
     s.title = val(`svc.${i}.title`);
     s.number = val(`svc.${i}.number`);
     s.description = val(`svc.${i}.description`);
     s.link = val(`svc.${i}.link`);
+    s.image = val(`svc.${i}.image`);
     const cb = document.querySelector(`[data-svc="${i}.featured"]`);
     s.featured = cb?.checked ?? true;
   });
