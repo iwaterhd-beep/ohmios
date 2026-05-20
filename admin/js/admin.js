@@ -321,6 +321,17 @@ function renderSettings() {
         ${field('Horario', 'schedule', s.schedule, 'textarea', true)}
         ${field('Descripción footer', 'footerDescription', s.footerDescription, 'textarea', true)}
       </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">Redes sociales y analítica</h3>
+      <div class="admin-grid">
+        ${field('Instagram (URL completa)', 'instagram', s.instagram || '', 'url')}
+        ${field('LinkedIn (URL completa)', 'linkedin', s.linkedin || '', 'url')}
+        ${field('Google Analytics 4 (ID)', 'gaId', s.gaId || '', 'text')}
+      </div>
+      <small style="color:var(--muted);font-size:0.75rem;display:block;margin-top:0.75rem">
+        GA4: crea una propiedad en Google Analytics y pega el ID <code>G-XXXXXXXXXX</code>. Solo se activa tras aceptar cookies.
+      </small>
     </div>`;
   bindFields('panel-settings');
 }
@@ -654,6 +665,9 @@ function collectSettings() {
   s.city = val('city');
   s.schedule = val('schedule');
   s.footerDescription = val('footerDescription');
+  s.instagram = val('instagram');
+  s.linkedin = val('linkedin');
+  s.gaId = val('gaId');
 }
 
 function collectHome() {

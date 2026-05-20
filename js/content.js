@@ -155,6 +155,27 @@ function applySettings(s) {
   if (footerDesc && s.footerDescription) footerDesc.textContent = s.footerDescription;
   const schedule = document.querySelector('[data-cms="schedule"]');
   if (schedule && s.schedule) schedule.innerHTML = s.schedule.replace(/\n/g, '<br>');
+  applySocialLinks(s);
+}
+
+function applySocialLinks(s) {
+  const links = {
+    instagram: s.instagram,
+    linkedin: s.linkedin,
+    whatsapp: s.whatsapp ? `https://wa.me/${s.whatsapp}` : '',
+  };
+
+  Object.entries(links).forEach(([key, url]) => {
+    document.querySelectorAll(`[data-cms-social="${key}"]`).forEach((el) => {
+      const value = url?.trim();
+      if (value) {
+        el.href = value;
+        el.removeAttribute('hidden');
+      } else if (key !== 'whatsapp') {
+        el.setAttribute('hidden', '');
+      }
+    });
+  });
 }
 
 function applyHome(home, services, projects) {
