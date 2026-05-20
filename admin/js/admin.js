@@ -51,12 +51,21 @@ function setToken(token) {
   sessionStorage.setItem(TOKEN_KEY, token);
 }
 
-function logout() {
+function logout(clearError = true) {
   sessionStorage.removeItem(TOKEN_KEY);
-  if (adminApp) adminApp.hidden = true;
-  if (loginScreen) loginScreen.hidden = false;
-  clearLoginError();
+  showLoginView();
+  if (clearError) clearLoginError();
   setLoginLoading(false);
+}
+
+function showLoginView() {
+  if (adminApp) adminApp.setAttribute('hidden', '');
+  if (loginScreen) loginScreen.removeAttribute('hidden');
+}
+
+function showDashboardView() {
+  if (loginScreen) loginScreen.setAttribute('hidden', '');
+  if (adminApp) adminApp.removeAttribute('hidden');
 }
 
 async function api(path, options = {}) {
@@ -93,7 +102,7 @@ loginForm?.addEventListener('submit', async (e) => {
     setToken(token);
     await bootDashboard();
   } catch (err) {
-    logout();
+    logout(false);
     showLoginError(err.message || 'No se pudo entrar. Inténtalo de nuevo.');
     setLoginLoading(false);
   }
@@ -112,9 +121,7 @@ async function bootDashboard() {
 
   state = { settings, home, services, projects };
   renderAll();
-
-  if (loginScreen) loginScreen.hidden = true;
-  if (adminApp) adminApp.hidden = false;
+  showDashboardView();
   setLoginLoading(false);
 }
 
@@ -127,7 +134,7 @@ async function loadJSON(name) {
 if (getToken()) {
   setLoginLoading(true);
   bootDashboard().catch((err) => {
-    logout();
+    logout(false);
     showLoginError(err.message || 'Sesión expirada. Vuelve a entrar.');
   });
 } else if (loginSubmit) {
@@ -183,10 +190,14 @@ function showStatus(type, msg) {
 
 // ── Render ──
 function renderAll() {
-  renderSettings();
-  renderHome();
-  renderServices();
-  renderProjects();
+  try {
+    renderSettings();
+    renderHome();
+    renderServices();
+    renderProjects();
+  } catch (err) {
+    throw new Error(`Error al cargar el panel: ${err.message}`);
+  }
 }
 
 function field(label, id, value = '', type = 'text', full = false) {

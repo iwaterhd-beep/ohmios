@@ -24,6 +24,11 @@ body {
 }
 
 /* Login */
+.admin-login[hidden],
+.admin-app[hidden] {
+  display: none !important;
+}
+
 .admin-login {
   min-height: 100vh;
   display: flex;
