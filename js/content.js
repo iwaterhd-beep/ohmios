@@ -4,7 +4,7 @@
  */
 
 import { isVideoUrl, resolveHeroMedia, getHeroBackgroundMedia, migrateHeroFields, bustMediaCache } from './media-utils.js';
-import { initHeroVideo } from './preloader.js';
+import { initHeroVideo, startHeroVideo } from './preloader.js';
 
 const ICONS = {
   electrico: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
@@ -164,7 +164,6 @@ function applyHero(hero) {
   if (subtitle) subtitle.textContent = hero.subtitle;
 
   applyHeroMedia(hero);
-  initHeroVideo();
 
   const stats = section.querySelectorAll('.hero__stat');
   hero.stats?.forEach((stat, i) => {
@@ -200,11 +199,16 @@ function applyHeroMedia(hero) {
     video.playsInline = true;
     video.autoplay = true;
     video.preload = 'auto';
+    video.setAttribute('muted', '');
+    video.setAttribute('autoplay', '');
+    video.setAttribute('loop', '');
+    video.setAttribute('playsinline', '');
     video.setAttribute('webkit-playsinline', '');
     video.setAttribute('aria-hidden', 'true');
-    video.src = url;
     media.appendChild(video);
-    media.classList.add('is-video-active');
+    video.src = url;
+    video.load();
+    startHeroVideo(video);
     return;
   }
 

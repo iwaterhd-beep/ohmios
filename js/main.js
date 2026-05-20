@@ -11,7 +11,7 @@ import { initProjects } from './projects.js';
 import { initForm } from './form.js';
 import { initSchema } from './schema.js';
 import { initCookies } from './cookies.js';
-import { injectPreloader, hidePreloader } from './preloader.js';
+import { injectPreloader, hidePreloader, initHeroVideo } from './preloader.js';
 import { initContent } from './content.js';
 
 injectPreloader();
@@ -163,6 +163,10 @@ async function init() {
 
   hidePreloader();
   document.body.classList.add('is-loaded');
+
+  initHeroVideo();
+  requestAnimationFrame(() => initHeroVideo());
+  window.addEventListener('load', () => initHeroVideo(), { once: true });
 }
 
 // Run when DOM is ready

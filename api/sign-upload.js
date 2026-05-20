@@ -16,6 +16,17 @@ function extFromMime(mime) {
   return 'jpg';
 }
 
+function stripFileExt(name) {
+  return name.replace(/\.(mp4|webm|mov|m4v|jpe?g|png|webp|gif)$/i, '');
+}
+
+function safeUploadName(filename) {
+  return stripFileExt(filename)
+    .toLowerCase()
+    .replace(/[^a-z0-9.-]/g, '-')
+    .replace(/-+/g, '-');
+}
+
 export default async function handler(req, res) {
   if (req.method !== 'POST') {
     return res.status(405).json({ error: 'Método no permitido' });
@@ -45,10 +56,7 @@ export default async function handler(req, res) {
       return res.status(400).json({ error: `Archivo demasiado grande (máx ${mb} MB).` });
     }
 
-    const safeName = filename
-      .toLowerCase()
-      .replace(/[^a-z0-9.-]/g, '-')
-      .replace(/-+/g, '-');
+    const safeName = safeUploadName(filename);
     const folder = isVideo ? 'videos' : 'images';
     const path = `${folder}/${Date.now()}-${safeName}.${extFromMime(mime)}`;
 

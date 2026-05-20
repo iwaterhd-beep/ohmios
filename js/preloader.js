@@ -28,34 +28,53 @@ export function hidePreloader() {
   setTimeout(() => el.remove(), 500);
 }
 
-export function initHeroVideo() {
-  const media = document.querySelector('.hero__media');
-  const video = media?.querySelector('.hero__video');
+/** Fuerza reproducción del vídeo de fondo (autoplay + interacción + visibilidad) */
+export function startHeroVideo(video) {
   if (!video || video.dataset.heroMode !== 'video') return;
 
+  const media = video.closest('.hero__media');
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReduced) {
     video.pause();
-    media.classList.remove('is-video-active');
+    media?.classList.remove('is-video-active');
     return;
   }
 
-  media.classList.add('is-video-active');
   video.muted = true;
   video.defaultMuted = true;
+  video.setAttribute('muted', '');
+  video.playsInline = true;
+  video.setAttribute('playsinline', '');
+  video.setAttribute('webkit-playsinline', '');
+  media?.classList.add('is-video-active');
 
-  const tryPlay = () => {
-    video.play().catch(() => {
-      video.addEventListener('canplaythrough', () => video.play().catch(() => {}), { once: true });
-    });
+  const play = () => {
+    if (video.paused) {
+      video.play().catch(() => {});
+    }
   };
 
-  if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
-    tryPlay();
-    return;
-  }
+  ['loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough'].forEach((event) => {
+    video.addEventListener(event, play, { once: true });
+  });
 
-  video.addEventListener('canplay', tryPlay, { once: true });
-  video.addEventListener('loadeddata', tryPlay, { once: true });
+  play();
+
+  if (!video.dataset.heroBound) {
+    video.dataset.heroBound = '1';
+
+    document.addEventListener('visibilitychange', () => {
+      if (!document.hidden) play();
+    });
+
+    const resumeOnGesture = () => play();
+    window.addEventListener('pointerdown', resumeOnGesture, { passive: true });
+    window.addEventListener('touchstart', resumeOnGesture, { passive: true });
+    window.addEventListener('scroll', resumeOnGesture, { passive: true });
+  }
+}
+
+export function initHeroVideo() {
+  startHeroVideo(document.querySelector('.hero__video'));
 }

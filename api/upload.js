@@ -58,6 +58,7 @@ export default async function handler(req, res) {
     }
 
     const safeName = filename
+      .replace(/\.(mp4|webm|mov|m4v|jpe?g|png|webp|gif)$/i, '')
       .toLowerCase()
       .replace(/[^a-z0-9.-]/g, '-')
       .replace(/-+/g, '-');
