@@ -6,6 +6,10 @@
   "description": "OHMIOS Energía — Web corporativa premium + CMS",
   "scripts": {
     "dev": "npx serve -l 3456",
-    "deploy": "vercel --prod"
+    "deploy": "vercel --prod",
+    "seed:supabase": "node scripts/seed-supabase.mjs"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.49.8"
   }
 }

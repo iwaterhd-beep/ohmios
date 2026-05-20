@@ -281,22 +281,36 @@ body {
 
 .admin-error[hidden] { display: none !important; }
 
-/* Image upload */
+/* Image / video upload */
+.admin-media-field,
 .admin-image-field {
   display: flex;
   gap: 1rem;
   align-items: flex-start;
 }
 
+.admin-media-preview-box {
+  width: 160px;
+  min-height: 90px;
+  flex-shrink: 0;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--surface2);
+  overflow: hidden;
+}
+
+.admin-media-preview,
 .admin-image-preview {
-  width: 120px;
-  height: 80px;
+  width: 160px;
+  height: 90px;
   object-fit: cover;
   border-radius: 8px;
   border: 1px solid var(--border);
   background: var(--surface2);
+  display: block;
 }
 
+.admin-media-controls,
 .admin-image-controls { flex: 1; }
 
 /* List items (services/projects) */

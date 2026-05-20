@@ -3,6 +3,8 @@
  * Carga JSON del CMS y actualiza la web
  */
 
+import { isVideoUrl } from './media-utils.js';
+
 const ICONS = {
   electrico: '<path d="M13 2L3 14h9l-1 8 10-12h-9l1-8z"/>',
   renovables: '<circle cx="12" cy="12" r="5"/><path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>',
@@ -52,9 +54,26 @@ export function getContent() {
 }
 
 async function fetchJSON(path) {
-  const res = await fetch(`${path}?v=${Date.now()}`);
+  const name = path.replace(/^content\//, '').replace(/\.json$/, '');
+
+  try {
+    const apiRes = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
+    if (apiRes.ok) return apiRes.json();
+  } catch {
+    /* fallback estático */
+  }
+
+  const res = await fetch(`/content/${name}.json?v=${Date.now()}`);
   if (!res.ok) throw new Error(`Failed ${path}`);
   return res.json();
+}
+
+function mediaElementHTML(url, alt, className = '') {
+  if (!url) return '';
+  if (isVideoUrl(url)) {
+    return `<video class="${className}" src="${esc(url)}" muted loop playsinline autoplay aria-hidden="true"></video>`;
+  }
+  return `<img class="${className}" src="${esc(url)}" alt="${esc(alt)}" loading="lazy">`;
 }
 
 function applySettings(s) {
@@ -106,12 +125,21 @@ function applyHero(hero) {
   const subtitle = section.querySelector('.hero__subtitle');
   if (subtitle) subtitle.textContent = hero.subtitle;
 
-  const video = section.querySelector('.hero__video source');
-  if (video && hero.videoUrl) video.src = hero.videoUrl;
-  const poster = section.querySelector('.hero__video');
+  const videoEl = section.querySelector('.hero__video');
+  const source = videoEl?.querySelector('source');
+  if (videoEl && hero.videoUrl) {
+    if (source) source.src = hero.videoUrl;
+    else videoEl.src = hero.videoUrl;
+    videoEl.load();
+    videoEl.play().catch(() => {});
+  }
   const fallback = section.querySelector('.hero__image--fallback');
-  if (poster && hero.posterUrl) poster.poster = hero.posterUrl;
-  if (fallback && hero.posterUrl) fallback.src = hero.posterUrl;
+  if (videoEl && hero.posterUrl && !isVideoUrl(hero.posterUrl)) {
+    videoEl.poster = hero.posterUrl;
+  }
+  if (fallback && hero.posterUrl && !isVideoUrl(hero.posterUrl)) {
+    fallback.src = hero.posterUrl;
+  }
 
   const stats = section.querySelectorAll('.hero__stat');
   hero.stats?.forEach((stat, i) => {
@@ -138,8 +166,11 @@ function applyAbout(about) {
   const texts = section.querySelectorAll('.about__text');
   about.paragraphs?.forEach((p, i) => { if (texts[i]) texts[i].textContent = p; });
 
-  const img = section.querySelector('.about__image');
-  if (img) { img.src = about.image; img.alt = about.imageAlt || ''; }
+  const wrapper = section.querySelector('.about__image-wrapper');
+  if (wrapper && about.image) {
+    const overlay = '<div class="about__image-overlay" aria-hidden="true"></div>';
+    wrapper.innerHTML = mediaElementHTML(about.image, about.imageAlt || '', 'about__image') + overlay;
+  }
 
   const badgeNum = section.querySelector('.about__badge-number');
   if (badgeNum) {
@@ -221,7 +252,7 @@ function projectCardHTML(p) {
   return `
     <article class="project-card" data-category="${esc(p.category)}" data-reveal data-cursor="hover">
       <div class="project-card__image">
-        <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" />
+        ${mediaElementHTML(p.image, p.title)}
         <div class="project-card__overlay"></div>
       </div>
       <div class="project-card__content">
@@ -281,8 +312,31 @@ function applyCta(cta) {
   const text = section.querySelector('.cta__text');
   if (text) text.textContent = cta.text;
 
-  const bgImg = section.querySelector('.cta__bg-image');
-  if (bgImg && cta.backgroundImage) bgImg.src = cta.backgroundImage;
+  const bg = section.querySelector('.cta__bg');
+  if (bg && cta.backgroundImage) {
+    const overlay = bg.querySelector('.cta__bg-overlay');
+    bg.querySelector('.cta__bg-image, .cta__bg-video')?.remove();
+
+    if (isVideoUrl(cta.backgroundImage)) {
+      const video = document.createElement('video');
+      video.className = 'cta__bg-video';
+      video.src = cta.backgroundImage;
+      video.muted = true;
+      video.loop = true;
+      video.playsInline = true;
+      video.autoplay = true;
+      video.setAttribute('aria-hidden', 'true');
+      bg.insertBefore(video, overlay);
+      video.play().catch(() => {});
+    } else {
+      const img = document.createElement('img');
+      img.className = 'cta__bg-image';
+      img.src = cta.backgroundImage;
+      img.alt = '';
+      img.loading = 'lazy';
+      bg.insertBefore(img, overlay);
+    }
+  }
 }
 
 function applyProjectsPage(projectsData) {
@@ -302,7 +356,7 @@ function projectItemHTML(p) {
       data-project-client="${esc(p.client)}" data-project-year="${esc(p.year)}"
       data-project-area="${esc(p.area)}">
       <div class="project-item__image">
-        <img src="${esc(p.image)}" alt="${esc(p.title)}" loading="lazy" />
+        ${mediaElementHTML(p.image, p.title)}
         <div class="project-item__overlay"></div>
       </div>
       <div class="project-item__view" aria-hidden="true">

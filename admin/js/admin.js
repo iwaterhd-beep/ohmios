@@ -126,9 +126,12 @@ async function bootDashboard() {
 }
 
 async function loadJSON(name) {
-  const res = await fetch(`/content/${name}.json?v=${Date.now()}`);
-  if (!res.ok) throw new Error(`No se pudo cargar ${name}.json`);
-  return res.json();
+  const res = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
+  if (res.ok) return res.json();
+
+  const fallback = await fetch(`/content/${name}.json?v=${Date.now()}`);
+  if (!fallback.ok) throw new Error(`No se pudo cargar ${name}.json`);
+  return fallback.json();
 }
 
 if (getToken()) {
@@ -208,17 +211,37 @@ function field(label, id, value = '', type = 'text', full = false) {
   return `<div class="${cls}"><label class="admin-label">${label}</label><input class="admin-input" type="${type}" data-field="${id}" value="${esc(value)}"></div>`;
 }
 
-function imageField(label, id, url) {
+function isVideoUrl(url) {
+  if (!url) return false;
+  return /\.(mp4|webm|mov|m4v|ogg)(\?|#|$)/i.test(url) || /\/video\//i.test(url);
+}
+
+function mediaPreviewHTML(url) {
+  if (!url) return '';
+  if (isVideoUrl(url)) {
+    return `<video class="admin-media-preview" src="${esc(url)}" muted loop playsinline autoplay></video>`;
+  }
+  return `<img class="admin-media-preview" src="${esc(url)}" alt="">`;
+}
+
+function updateMediaPreviewBox(box, url) {
+  if (!box) return;
+  box.innerHTML = url ? mediaPreviewHTML(url) : '';
+  const video = box.querySelector('video');
+  if (video) video.play().catch(() => {});
+}
+
+function mediaField(label, id, url) {
   const previewId = id.replace(/\./g, '-');
   return `
     <div class="admin-field admin-field--full">
       <label class="admin-label">${label}</label>
-      <div class="admin-image-field">
-        <img class="admin-image-preview" id="${previewId}-preview" src="${esc(url || '')}" alt="">
-        <div class="admin-image-controls">
-          <input class="admin-input" type="url" data-field="${id}" value="${esc(url || '')}" placeholder="URL de imagen">
-          <input type="file" accept="image/*" data-upload="${id}" style="margin-top:0.5rem">
-          <small style="color:var(--muted);font-size:0.75rem">Sube una imagen o pega una URL</small>
+      <div class="admin-media-field">
+        <div class="admin-media-preview-box" id="${previewId}-preview">${mediaPreviewHTML(url)}</div>
+        <div class="admin-media-controls">
+          <input class="admin-input" type="url" data-field="${id}" value="${esc(url || '')}" placeholder="URL de imagen o vídeo">
+          <input type="file" accept="image/*,video/mp4,video/webm,video/quicktime" data-upload="${id}" style="margin-top:0.5rem">
+          <small style="color:var(--muted);font-size:0.75rem">Sube imagen (JPG, PNG) o vídeo (MP4, WebM)</small>
         </div>
       </div>
     </div>`;
@@ -258,8 +281,8 @@ function renderHome() {
         ${field('Título línea 3', 'hero.titleLines.2', hero.titleLines[2])}
         ${field('Título línea 4', 'hero.titleLines.3', hero.titleLines[3])}
         ${field('Subtítulo', 'hero.subtitle', hero.subtitle, 'textarea', true)}
-        ${field('URL vídeo', 'hero.videoUrl', hero.videoUrl)}
-        ${imageField('Imagen poster', 'hero.posterUrl', hero.posterUrl)}
+        ${mediaField('Vídeo hero (fondo)', 'hero.videoUrl', hero.videoUrl)}
+        ${mediaField('Poster / imagen hero', 'hero.posterUrl', hero.posterUrl)}
       </div>
     </div>
     <div class="admin-card">
@@ -280,7 +303,7 @@ function renderHome() {
         ${field('Título destacado', 'about.titleHighlight', about.titleHighlight)}
         ${field('Párrafo 1', 'about.paragraphs.0', about.paragraphs[0], 'textarea', true)}
         ${field('Párrafo 2', 'about.paragraphs.1', about.paragraphs[1], 'textarea', true)}
-        ${imageField('Imagen', 'about.image', about.image)}
+        ${mediaField('Imagen o vídeo', 'about.image', about.image)}
       </div>
     </div>
     <div class="admin-card">
@@ -290,7 +313,7 @@ function renderHome() {
         ${field('Título', 'cta.title', h.cta.title)}
         ${field('Destacado', 'cta.titleHighlight', h.cta.titleHighlight)}
         ${field('Texto', 'cta.text', h.cta.text, 'textarea', true)}
-        ${imageField('Imagen fondo', 'cta.backgroundImage', h.cta.backgroundImage)}
+        ${mediaField('Fondo imagen o vídeo', 'cta.backgroundImage', h.cta.backgroundImage)}
       </div>
     </div>`;
   bindFields('panel-home');
@@ -365,7 +388,7 @@ function projectItemHTML(p, i) {
         ${field('Año', `prj.${i}.year`, p.year)}
         ${field('Superficie', `prj.${i}.area`, p.area)}
         ${field('Descripción', `prj.${i}.description`, p.description, 'textarea', true)}
-        ${imageField('Imagen', `prj.${i}.image`, p.image)}
+        ${mediaField('Imagen o vídeo', `prj.${i}.image`, p.image)}
       </div>
     </div>`;
 }
@@ -406,8 +429,8 @@ function bindFields(panelId) {
 
   panel.querySelectorAll('[data-field]').forEach((el) => {
     el.addEventListener('input', () => {
-      const preview = el.closest('.admin-image-field')?.querySelector('.admin-image-preview');
-      if (preview && el.type === 'url') preview.src = el.value;
+      const box = el.closest('.admin-media-field')?.querySelector('.admin-media-preview-box');
+      if (box && el.type === 'url') updateMediaPreviewBox(box, el.value);
     });
   });
 
@@ -417,18 +440,18 @@ function bindFields(panelId) {
       if (!file) return;
       const targetField = input.dataset.upload;
       const urlInput = document.querySelector(`[data-field="${targetField}"]`);
-      const preview = document.getElementById(`${targetField.replace(/\./g, '-')}-preview`) 
-        || urlInput?.closest('.admin-image-field')?.querySelector('.admin-image-preview');
+      const previewBox = document.getElementById(`${targetField.replace(/\./g, '-')}-preview`)
+        || urlInput?.closest('.admin-media-field')?.querySelector('.admin-media-preview-box');
 
       try {
         const dataUrl = await fileToDataUrl(file);
         const { url } = await api('/api/upload', {
           method: 'POST',
-          body: JSON.stringify({ filename: file.name, dataUrl }),
+          body: JSON.stringify({ filename: file.name, dataUrl, mimeType: file.type }),
         });
         if (urlInput) urlInput.value = url;
-        if (preview) preview.src = url;
-        showStatus('success', 'Imagen subida correctamente.');
+        updateMediaPreviewBox(previewBox, url);
+        showStatus('success', isVideoUrl(url) ? 'Vídeo subido correctamente.' : 'Imagen subida correctamente.');
       } catch (err) {
         showStatus('error', err.message);
       }

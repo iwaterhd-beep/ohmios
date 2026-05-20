@@ -3,6 +3,8 @@
  * Portfolio filters and modal
  */
 
+import { setMediaContainer } from './media-utils.js';
+
 export function initProjects() {
   initFilters();
   initModal();
@@ -65,7 +67,7 @@ function initModal() {
 
   if (!modal || projectItems.length === 0) return;
 
-  const modalImage = document.getElementById('modalImage');
+  const modalMedia = document.getElementById('modalMedia');
   const modalTitle = document.getElementById('modalTitle');
   const modalCategory = document.getElementById('modalCategory');
   const modalStatus = document.getElementById('modalStatus');
@@ -83,8 +85,9 @@ function initModal() {
     modalClient.textContent = item.dataset.projectClient;
     modalYear.textContent = item.dataset.projectYear;
     modalArea.textContent = item.dataset.projectArea;
-    modalImage.src = item.dataset.projectImage;
-    modalImage.alt = item.dataset.projectTitle;
+    if (modalMedia) {
+      setMediaContainer(modalMedia, item.dataset.projectImage, item.dataset.projectTitle);
+    }
 
     const status = item.dataset.projectStatus;
     modalStatus.textContent = status;
