@@ -33,7 +33,7 @@ function initHeroAnimations() {
   });
 
   const hero = document.getElementById('hero');
-  const heroVideo = hero?.querySelector('.hero__video');
+  const heroVideo = hero?.querySelector('#hero-bg-video:not([hidden])');
   const heroMedia = hero?.querySelector('.hero__media');
 
   // El transform de GSAP congela vídeos HTML — parallax solo con imagen estática

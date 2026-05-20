@@ -179,47 +179,41 @@ function applyHero(hero) {
 
 function applyHeroMedia(hero) {
   const media = document.querySelector('.hero__media');
-  if (!media) return;
+  const video = document.getElementById('hero-bg-video');
+  const img = document.getElementById('hero-bg-image');
+  if (!media || !video || !img) return;
 
   const { mode, src } = resolveHeroMedia(hero);
   media.classList.remove('is-video-active');
-  media.innerHTML = '';
 
-  if (!src) return;
+  if (!src) {
+    video.hidden = true;
+    video.pause();
+    video.removeAttribute('src');
+    video.dataset.heroMode = '';
+    img.hidden = true;
+    img.removeAttribute('src');
+    return;
+  }
 
   const url = bustMediaCache(src);
 
   if (mode === 'video') {
-    const video = document.createElement('video');
-    video.className = 'hero__video';
+    img.hidden = true;
+    img.removeAttribute('src');
+    video.hidden = false;
     video.dataset.heroMode = 'video';
-    video.muted = true;
-    video.defaultMuted = true;
-    video.loop = true;
-    video.playsInline = true;
-    video.autoplay = true;
-    video.preload = 'auto';
-    video.setAttribute('muted', '');
-    video.setAttribute('autoplay', '');
-    video.setAttribute('loop', '');
-    video.setAttribute('playsinline', '');
-    video.setAttribute('webkit-playsinline', '');
-    video.setAttribute('aria-hidden', 'true');
-    media.appendChild(video);
     video.src = url;
     startHeroVideo(video);
     return;
   }
 
-  const img = document.createElement('img');
-  img.className = 'hero__image hero__image--fallback';
-  img.dataset.heroMode = 'image';
+  video.hidden = true;
+  video.pause();
+  video.removeAttribute('src');
+  video.dataset.heroMode = '';
+  img.hidden = false;
   img.src = url;
-  img.alt = '';
-  img.loading = 'eager';
-  img.fetchPriority = 'high';
-  img.setAttribute('aria-hidden', 'true');
-  media.appendChild(img);
 }
 
 function applyAbout(about) {

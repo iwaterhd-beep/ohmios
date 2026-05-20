@@ -31,6 +31,11 @@
   backface-visibility: hidden;
 }
 
+.hero__video[hidden],
+.hero__image[hidden] {
+  display: none !important;
+}
+
 .hero__media.is-video-active .hero__video {
   z-index: 1;
 }

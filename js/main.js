@@ -166,11 +166,7 @@ async function init() {
 
   hidePreloader();
   document.body.classList.add('is-loaded');
-
-  // Reproducir vídeo tras GSAP/Lenis — Chrome necesita el DOM estable
-  setTimeout(() => initHeroVideo(), 100);
-  setTimeout(() => initHeroVideo(), 600);
-  window.addEventListener('load', () => initHeroVideo(), { once: true });
+  initHeroVideo();
 }
 
 // Run when DOM is ready
