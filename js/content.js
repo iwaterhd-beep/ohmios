@@ -405,6 +405,9 @@ function applyServicesPage(servicesData) {
     const titleEl = section.querySelector('.service-detail__title');
     if (titleEl) titleEl.textContent = s.title;
 
+    const cta = section.querySelector('.service-detail__content .btn--primary');
+    if (cta) cta.href = `contacto.html?servicio=${encodeURIComponent(s.id)}`;
+
     const descEl = section.querySelector('.service-detail__desc');
     if (descEl && s.pageDescription) descEl.textContent = s.pageDescription;
   });

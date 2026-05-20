@@ -1,9 +1,19 @@
 /**
  * OHMIOS ENERGÍA — Contact Form Module
- * Envío real vía FormSubmit → instalaciones.ohmios@gmail.com
+ * Envío vía FormSubmit → instalaciones.ohmios@gmail.com
  */
 
 import { SITE } from './config.js';
+
+const SERVICE_LABELS = {
+  electrico: 'Instalaciones eléctricas',
+  renovables: 'Energías renovables',
+  solar: 'Placas solares',
+  reformas: 'Reformas integrales',
+  recarga: 'Puntos de recarga VE',
+  iluminacion: 'Iluminación técnica',
+  otro: 'Otro',
+};
 
 export function initForm() {
   const form = document.getElementById('contactForm');
@@ -13,18 +23,30 @@ export function initForm() {
     name: form.querySelector('[name="name"]'),
     email: form.querySelector('[name="email"]'),
     message: form.querySelector('[name="message"]'),
+    privacy: form.querySelector('[name="privacy"]'),
+    honeypot: form.querySelector('[name="website"]'),
   };
 
+  const serviceSelect = form.querySelector('[name="service"]');
   const statusEl = document.getElementById('formStatus');
   const submitBtn = form.querySelector('[type="submit"]');
   const originalHTML = submitBtn?.innerHTML || '';
 
+  prefillServiceFromUrl(serviceSelect);
+
   Object.values(fields).forEach((input) => {
     input?.addEventListener('input', () => clearFieldError(input));
+    input?.addEventListener('change', () => clearFieldError(input));
   });
 
   form.addEventListener('submit', async (e) => {
     e.preventDefault();
+
+    if (fields.honeypot?.value.trim()) {
+      form.reset();
+      showStatus(statusEl, 'success', 'Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');
+      return;
+    }
 
     let isValid = true;
 
@@ -43,6 +65,11 @@ export function initForm() {
       isValid = false;
     }
 
+    if (fields.privacy && !fields.privacy.checked) {
+      setFieldError(fields.privacy);
+      isValid = false;
+    }
+
     if (!isValid) {
       showStatus(statusEl, 'error', 'Revisa los campos marcados antes de enviar.');
       return;
@@ -52,13 +79,16 @@ export function initForm() {
     submitBtn.innerHTML = 'Enviando…';
     showStatus(statusEl, '', '');
 
+    const serviceValue = serviceSelect?.value || '';
+    const serviceLabel = SERVICE_LABELS[serviceValue] || serviceValue || '—';
+
     const payload = {
       name: fields.name.value.trim(),
       email: fields.email.value.trim(),
       phone: form.querySelector('[name="phone"]')?.value.trim() || '—',
-      service: form.querySelector('[name="service"]')?.value || '—',
+      service: serviceLabel,
       message: fields.message.value.trim(),
-      _subject: `Nuevo contacto web — ${fields.name.value.trim()}`,
+      _subject: `Nuevo contacto web — ${fields.name.value.trim()}${serviceLabel !== '—' ? ` (${serviceLabel})` : ''}`,
       _template: 'table',
       _captcha: 'false',
     };
@@ -86,9 +116,22 @@ export function initForm() {
     } catch {
       submitBtn.innerHTML = originalHTML;
       submitBtn.disabled = false;
-      showStatus(statusEl, 'error', 'No se pudo enviar. Escríbenos a ' + SITE.email + ' o llama al ' + SITE.phone + '.');
+      showStatus(
+        statusEl,
+        'error',
+        `No se pudo enviar. Escríbenos a ${SITE.email} o llama al ${SITE.phone}.`
+      );
     }
   });
+}
+
+function prefillServiceFromUrl(select) {
+  if (!select) return;
+
+  const param = new URLSearchParams(window.location.search).get('servicio');
+  if (!param || !select.querySelector(`option[value="${param}"]`)) return;
+
+  select.value = param;
 }
 
 function isValidEmail(email) {

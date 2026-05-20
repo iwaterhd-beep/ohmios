@@ -4,6 +4,15 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta name="description" content="Contacta con OHMIOS Energía — Solicita presupuesto para instalaciones eléctricas y energías renovables en Sevilla. Respuesta en 24h.">
+  <meta property="og:title" content="Contacto | OHMIOS Energía">
+  <meta property="og:description" content="Solicita presupuesto para instalaciones eléctricas, placas solares y reformas en Sevilla. Respuesta en 24h.">
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://ohmios.vercel.app/contacto">
+  <meta property="og:image" content="https://ohmios.vercel.app/assets/images/cms/hero-poster.jpg">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="Contacto | OHMIOS Energía">
+  <meta name="twitter:description" content="Solicita presupuesto para instalaciones eléctricas en Sevilla.">
+  <meta name="twitter:image" content="https://ohmios.vercel.app/assets/images/cms/hero-poster.jpg">
   <title>Contacto | OHMIOS Energía</title>
   <link rel="canonical" href="https://ohmios.vercel.app/contacto">
   <link rel="icon" type="image/png" href="assets/images/logo-ohmios.png">
@@ -89,6 +98,19 @@
                 <label class="form-label" for="message">Mensaje *</label>
                 <textarea class="form-textarea" id="message" name="message" placeholder="Cuéntanos sobre tu proyecto..." required></textarea>
                 <span class="form-error">Este campo es obligatorio</span>
+              </div>
+
+              <div class="form-group form-group--checkbox">
+                <label class="form-checkbox">
+                  <input type="checkbox" id="privacy" name="privacy" required>
+                  <span>He leído y acepto la <a href="privacidad.html" target="_blank" rel="noopener">política de privacidad</a> *</span>
+                </label>
+                <span class="form-error">Debes aceptar la política de privacidad</span>
+              </div>
+
+              <div class="form-group form-group--honeypot" aria-hidden="true">
+                <label class="form-label" for="website">Website</label>
+                <input class="form-input" type="text" id="website" name="website" tabindex="-1" autocomplete="off">
               </div>
 
               <button type="submit" class="btn btn--primary" data-cursor="hover">

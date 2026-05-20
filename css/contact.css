@@ -151,6 +151,41 @@
   color: #ff8080;
 }
 
+.form-group--checkbox .form-checkbox {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--space-sm);
+  font-size: var(--text-sm);
+  color: var(--color-gray-400);
+  cursor: pointer;
+}
+
+.form-group--checkbox input[type="checkbox"] {
+  width: 1rem;
+  height: 1rem;
+  margin-top: 0.15rem;
+  flex-shrink: 0;
+  accent-color: var(--color-electric);
+}
+
+.form-group--checkbox a {
+  color: var(--color-electric);
+  text-decoration: underline;
+  text-underline-offset: 2px;
+}
+
+.form-group--checkbox.has-error .form-checkbox {
+  color: #ff8080;
+}
+
+.form-group--honeypot {
+  position: absolute;
+  left: -9999px;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+}
+
 /* ── Contact Info ── */
 .contact-info {
   display: flex;
