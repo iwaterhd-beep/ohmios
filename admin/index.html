@@ -21,13 +21,13 @@
         <h1>Panel OHMIOS</h1>
         <p>Gestiona textos, imágenes y proyectos</p>
       </div>
-      <form id="loginForm">
+      <form id="loginForm" novalidate>
         <label class="admin-label" for="email">Email</label>
         <input class="admin-input" type="email" id="email" value="ohmios@admin.com" placeholder="ohmios@admin.com" required autocomplete="username">
         <label class="admin-label" for="password">Contraseña</label>
         <input class="admin-input" type="password" id="password" placeholder="Introduce tu contraseña" required autocomplete="current-password">
-        <p class="admin-error" id="loginError" hidden></p>
-        <button type="submit" class="admin-btn admin-btn--primary">Entrar al panel</button>
+        <p class="admin-error" id="loginError" hidden role="alert"></p>
+        <button type="submit" class="admin-btn admin-btn--primary" id="loginSubmit" disabled>Entrar al panel</button>
       </form>
       <p class="admin-login__hint">Los cambios se publican automáticamente en la web en ~1 minuto.</p>
     </div>
@@ -74,6 +74,6 @@
     </main>
   </div>
 
-  <script src="/admin/js/admin.js" type="module"></script>
+  <script src="/admin/js/admin.js"></script>
 </body>
 </html>

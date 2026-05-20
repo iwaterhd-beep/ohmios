@@ -23,6 +23,25 @@ const loginScreen = document.getElementById('loginScreen');
 const adminApp = document.getElementById('adminApp');
 const loginForm = document.getElementById('loginForm');
 const loginError = document.getElementById('loginError');
+const loginSubmit = document.getElementById('loginSubmit');
+
+function showLoginError(message) {
+  if (!loginError) return;
+  loginError.textContent = message;
+  loginError.hidden = false;
+}
+
+function clearLoginError() {
+  if (!loginError) return;
+  loginError.textContent = '';
+  loginError.hidden = true;
+}
+
+function setLoginLoading(isLoading) {
+  if (!loginSubmit) return;
+  loginSubmit.disabled = isLoading;
+  loginSubmit.textContent = isLoading ? 'Entrando…' : 'Entrar al panel';
+}
 
 function getToken() {
   return sessionStorage.getItem(TOKEN_KEY);
@@ -34,8 +53,10 @@ function setToken(token) {
 
 function logout() {
   sessionStorage.removeItem(TOKEN_KEY);
-  adminApp.hidden = true;
-  loginScreen.hidden = false;
+  if (adminApp) adminApp.hidden = true;
+  if (loginScreen) loginScreen.hidden = false;
+  clearLoginError();
+  setLoginLoading(false);
 }
 
 async function api(path, options = {}) {
@@ -51,20 +72,30 @@ async function api(path, options = {}) {
 
 loginForm?.addEventListener('submit', async (e) => {
   e.preventDefault();
-  loginError.hidden = true;
-  const email = document.getElementById('email').value.trim();
-  const password = document.getElementById('password').value;
+  clearLoginError();
+  setLoginLoading(true);
+
+  const email = document.getElementById('email')?.value.trim() || '';
+  const password = document.getElementById('password')?.value || '';
+
+  if (!email || !password) {
+    showLoginError('Introduce email y contraseña.');
+    setLoginLoading(false);
+    return;
+  }
 
   try {
     const { token } = await api('/api/login', {
       method: 'POST',
       body: JSON.stringify({ email, password }),
     });
+    if (!token) throw new Error('Respuesta inválida del servidor.');
     setToken(token);
     await bootDashboard();
   } catch (err) {
-    loginError.textContent = err.message;
-    loginError.hidden = false;
+    logout();
+    showLoginError(err.message || 'No se pudo entrar. Inténtalo de nuevo.');
+    setLoginLoading(false);
   }
 });
 
@@ -72,9 +103,6 @@ document.getElementById('logoutBtn')?.addEventListener('click', logout);
 
 // ── Boot ──
 async function bootDashboard() {
-  loginScreen.hidden = true;
-  adminApp.hidden = false;
-
   const [settings, home, services, projects] = await Promise.all([
     loadJSON('settings'),
     loadJSON('home'),
@@ -84,6 +112,10 @@ async function bootDashboard() {
 
   state = { settings, home, services, projects };
   renderAll();
+
+  if (loginScreen) loginScreen.hidden = true;
+  if (adminApp) adminApp.hidden = false;
+  setLoginLoading(false);
 }
 
 async function loadJSON(name) {
@@ -93,7 +125,13 @@ async function loadJSON(name) {
 }
 
 if (getToken()) {
-  bootDashboard().catch(() => logout());
+  setLoginLoading(true);
+  bootDashboard().catch((err) => {
+    logout();
+    showLoginError(err.message || 'Sesión expirada. Vuelve a entrar.');
+  });
+} else if (loginSubmit) {
+  loginSubmit.disabled = false;
 }
 
 // ── Navigation ──
