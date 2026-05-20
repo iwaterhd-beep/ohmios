@@ -60,16 +60,71 @@ export function getContent() {
 async function fetchJSON(path) {
   const name = path.replace(/^content\//, '').replace(/\.json$/, '');
 
+  let data = null;
   try {
     const apiRes = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
-    if (apiRes.ok) return apiRes.json();
+    if (apiRes.ok) data = await apiRes.json();
   } catch {
     /* fallback estático */
   }
 
-  const res = await fetch(`/content/${name}.json?v=${Date.now()}`);
-  if (!res.ok) throw new Error(`Failed ${path}`);
-  return res.json();
+  let repo = null;
+  try {
+    const repoRes = await fetch(`/content/${name}.json?v=${Date.now()}`);
+    if (repoRes.ok) repo = await repoRes.json();
+  } catch {
+    /* fallback estático */
+  }
+
+  if (!data && repo) return repo;
+  if (!data) throw new Error(`Failed ${path}`);
+  if (name === 'home' && repo) return mergeHomeMediaFromRepo(data, repo);
+  return data;
+}
+
+function isRemoteMedia(url) {
+  return typeof url === 'string' && /^https?:\/\//i.test(url);
+}
+
+function isLocalMedia(url) {
+  return typeof url === 'string' && url.startsWith('/');
+}
+
+/** Usa media local del repo si Supabase aún tiene URLs externas antiguas */
+function mergeHomeMediaFromRepo(data, repo) {
+  const merged = { ...data };
+
+  if (merged.hero && repo.hero) {
+    const hero = { ...merged.hero };
+    if (isRemoteMedia(hero.videoUrl) && isLocalMedia(repo.hero.videoUrl)) {
+      hero.videoUrl = repo.hero.videoUrl;
+    }
+    if (!hero.posterUrl?.trim() && repo.hero.posterUrl) {
+      hero.posterUrl = repo.hero.posterUrl;
+    } else if (isRemoteMedia(hero.posterUrl) && isLocalMedia(repo.hero.posterUrl)) {
+      hero.posterUrl = repo.hero.posterUrl;
+    }
+    merged.hero = hero;
+  }
+
+  if (merged.about && repo.about) {
+    const about = { ...merged.about };
+    if (isRemoteMedia(about.image) && isLocalMedia(repo.about.image)) {
+      about.image = repo.about.image;
+      about.imageAlt = repo.about.imageAlt || about.imageAlt;
+    }
+    merged.about = about;
+  }
+
+  if (merged.cta && repo.cta) {
+    const cta = { ...merged.cta };
+    if (isRemoteMedia(cta.backgroundImage) && isLocalMedia(repo.cta.backgroundImage)) {
+      cta.backgroundImage = repo.cta.backgroundImage;
+    }
+    merged.cta = cta;
+  }
+
+  return merged;
 }
 
 function mediaElementHTML(url, alt, className = '') {
@@ -132,10 +187,13 @@ function applyHero(hero) {
   const videoEl = section.querySelector('.hero__video');
   const source = videoEl?.querySelector('source');
   if (videoEl && hero.videoUrl) {
-    if (source) source.src = hero.videoUrl;
-    else videoEl.src = hero.videoUrl;
+    if (source) {
+      source.src = hero.videoUrl;
+      source.type = 'video/mp4';
+    } else {
+      videoEl.src = hero.videoUrl;
+    }
     videoEl.load();
-    videoEl.play().catch(() => {});
   }
   const fallback = section.querySelector('.hero__image--fallback');
   if (videoEl && hero.posterUrl && !isVideoUrl(hero.posterUrl)) {

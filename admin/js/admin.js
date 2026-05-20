@@ -130,11 +130,66 @@ async function bootDashboard() {
 
 async function loadJSON(name) {
   const res = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
-  if (res.ok) return res.json();
+  let data = null;
+  if (res.ok) data = await res.json();
 
-  const fallback = await fetch(`/content/${name}.json?v=${Date.now()}`);
-  if (!fallback.ok) throw new Error(`No se pudo cargar ${name}.json`);
-  return fallback.json();
+  let repo = null;
+  try {
+    const repoRes = await fetch(`/content/${name}.json?v=${Date.now()}`);
+    if (repoRes.ok) repo = await repoRes.json();
+  } catch {
+    /* fallback */
+  }
+
+  if (!data && repo) return repo;
+  if (!data) throw new Error(`No se pudo cargar ${name}.json`);
+
+  if (name === 'home' && repo) return mergeHomeMediaFromRepo(data, repo);
+  return data;
+}
+
+function isRemoteMedia(url) {
+  return typeof url === 'string' && /^https?:\/\//i.test(url);
+}
+
+function isLocalMedia(url) {
+  return typeof url === 'string' && url.startsWith('/');
+}
+
+function mergeHomeMediaFromRepo(data, repo) {
+  const merged = { ...data };
+
+  if (merged.hero && repo.hero) {
+    const hero = { ...merged.hero };
+    if (isRemoteMedia(hero.videoUrl) && isLocalMedia(repo.hero.videoUrl)) {
+      hero.videoUrl = repo.hero.videoUrl;
+    }
+    if (!hero.posterUrl?.trim() && repo.hero.posterUrl) {
+      hero.posterUrl = repo.hero.posterUrl;
+    } else if (isRemoteMedia(hero.posterUrl) && isLocalMedia(repo.hero.posterUrl)) {
+      hero.posterUrl = repo.hero.posterUrl;
+    }
+    merged.hero = hero;
+  }
+
+  if (merged.about && repo.about) {
+    const about = { ...merged.about };
+    if (isRemoteMedia(about.image) && isLocalMedia(repo.about.image)) {
+      about.image = repo.about.image;
+      about.imageAlt = repo.about.imageAlt || about.imageAlt;
+    }
+    merged.about = about;
+  }
+
+  if (merged.cta && repo.cta) {
+    const cta = { ...merged.cta };
+    if (isRemoteMedia(cta.backgroundImage) && isLocalMedia(repo.cta.backgroundImage)) {
+      cta.backgroundImage = repo.cta.backgroundImage;
+    }
+    merged.cta = cta;
+  }
+
+  return merged;
 }
 
 if (getToken()) {

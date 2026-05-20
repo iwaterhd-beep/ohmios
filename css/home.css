@@ -29,11 +29,18 @@
   position: absolute;
   inset: 0;
   z-index: 0;
+  transition: opacity var(--duration-base) var(--ease-out-expo);
+}
+
+.hero__media.is-video-active .hero__image--fallback {
+  opacity: 0;
+  pointer-events: none;
 }
 
 .hero__video {
   position: relative;
   z-index: 1;
+  display: block;
 }
 
 .hero__video[style*="display: none"] ~ .hero__image--fallback,
