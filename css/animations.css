@@ -164,6 +164,11 @@
     transition-duration: 0.01ms !important;
   }
 
+  .hero__marquee-track {
+    animation: marqueeScroll 40s linear infinite !important;
+    animation-iteration-count: infinite !important;
+  }
+
   .reveal {
     opacity: 1;
     transform: none;
