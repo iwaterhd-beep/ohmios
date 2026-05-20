@@ -71,13 +71,27 @@ function showDashboardView() {
 }
 
 async function api(path, options = {}) {
-  const headers = { 'Content-Type': 'application/json', ...options.headers };
+  const headers = { ...options.headers };
   const token = getToken();
   if (token) headers.Authorization = `Bearer ${token}`;
 
+  const isFormData = options.body instanceof FormData;
+  if (!isFormData && options.body && !headers['Content-Type']) {
+    headers['Content-Type'] = 'application/json';
+  }
+
   const res = await fetch(path, { ...options, headers });
-  const data = await res.json().catch(() => ({}));
-  if (!res.ok) throw new Error(data.error || 'Error de servidor');
+  const raw = await res.text();
+  let data = {};
+  try {
+    data = raw ? JSON.parse(raw) : {};
+  } catch {
+    data = { error: raw?.slice(0, 200) || `HTTP ${res.status}` };
+  }
+
+  if (!res.ok) {
+    throw new Error(data.error || `Error del servidor (HTTP ${res.status})`);
+  }
   return data;
 }
 
@@ -146,7 +160,22 @@ async function loadJSON(name) {
   if (name === 'home' && data.hero) {
     data.hero = migrateHeroFields({ ...data.hero });
   }
+  if (repo && name === 'home') return mergeHomeContent(repo, data);
   return data;
+}
+
+function mergeHomeContent(repo, data) {
+  return {
+    ...repo,
+    ...data,
+    hero: { ...repo.hero, ...data.hero, titleLines: data.hero?.titleLines || repo.hero?.titleLines || ['', '', '', ''] },
+    about: { ...repo.about, ...data.about },
+    cta: { ...repo.cta, ...data.cta },
+    servicesSection: { ...repo.servicesSection, ...data.servicesSection },
+    projectsSection: { ...repo.projectsSection, ...data.projectsSection },
+    valuesSection: { ...repo.valuesSection, ...data.valuesSection },
+    values: data.values?.length ? data.values : repo.values,
+  };
 }
 
 function migrateHeroFields(hero) {
@@ -197,7 +226,7 @@ document.getElementById('saveBtn')?.addEventListener('click', async () => {
       method: 'PUT',
       body: JSON.stringify(state[activeTab]),
     });
-    showStatus('success', '✓ Guardado. La web se actualizará en ~1 minuto.');
+    showStatus('success', '✓ Guardado. Los cambios son instantáneos en la web.');
   } catch (err) {
     showStatus('error', err.message);
   } finally {
@@ -315,26 +344,29 @@ function renderSettings() {
 
 function renderHome() {
   const h = state.home;
-  const hero = h.hero;
-  const about = h.about;
+  const hero = h.hero || {};
+  const about = h.about || {};
+  const titleLines = hero.titleLines || ['', '', '', ''];
+  const stats = hero.stats || [{ number: 0, suffix: '', label: '' }, { number: 0, suffix: '', label: '' }, { number: 0, suffix: '', label: '' }];
+  const paragraphs = about.paragraphs || ['', ''];
 
   document.getElementById('panel-home').innerHTML = `
     <div class="admin-card">
       <h3 class="admin-card__title">Hero (cabecera)</h3>
       <div class="admin-grid">
-        ${field('Badge', 'hero.badge', hero.badge)}
-        ${field('Título línea 1', 'hero.titleLines.0', hero.titleLines[0])}
-        ${field('Título línea 2', 'hero.titleLines.1', hero.titleLines[1])}
-        ${field('Título línea 3', 'hero.titleLines.2', hero.titleLines[2])}
-        ${field('Título línea 4', 'hero.titleLines.3', hero.titleLines[3])}
-        ${field('Subtítulo', 'hero.subtitle', hero.subtitle, 'textarea', true)}
+        ${field('Badge', 'hero.badge', hero.badge || '')}
+        ${field('Título línea 1', 'hero.titleLines.0', titleLines[0])}
+        ${field('Título línea 2', 'hero.titleLines.1', titleLines[1])}
+        ${field('Título línea 3', 'hero.titleLines.2', titleLines[2])}
+        ${field('Título línea 4', 'hero.titleLines.3', titleLines[3])}
+        ${field('Subtítulo', 'hero.subtitle', hero.subtitle || '', 'textarea', true)}
         ${mediaField('Fondo del hero (foto o vídeo)', 'hero.backgroundMedia', hero.backgroundMedia || hero.videoUrl || hero.posterUrl || '')}
       </div>
     </div>
     <div class="admin-card">
       <h3 class="admin-card__title">Estadísticas hero</h3>
       <div class="admin-grid">
-        ${hero.stats.map((st, i) => `
+        ${stats.map((st, i) => `
           ${field(`Stat ${i+1} número`, `hero.stats.${i}.number`, st.number, 'number')}
           ${field(`Stat ${i+1} sufijo`, `hero.stats.${i}.suffix`, st.suffix)}
           ${field(`Stat ${i+1} etiqueta`, `hero.stats.${i}.label`, st.label, 'text', true)}
@@ -344,22 +376,22 @@ function renderHome() {
     <div class="admin-card">
       <h3 class="admin-card__title">Quiénes somos (home)</h3>
       <div class="admin-grid">
-        ${field('Etiqueta', 'about.label', about.label)}
-        ${field('Título', 'about.title', about.title)}
-        ${field('Título destacado', 'about.titleHighlight', about.titleHighlight)}
-        ${field('Párrafo 1', 'about.paragraphs.0', about.paragraphs[0], 'textarea', true)}
-        ${field('Párrafo 2', 'about.paragraphs.1', about.paragraphs[1], 'textarea', true)}
-        ${mediaField('Imagen o vídeo', 'about.image', about.image)}
+        ${field('Etiqueta', 'about.label', about.label || '')}
+        ${field('Título', 'about.title', about.title || '')}
+        ${field('Título destacado', 'about.titleHighlight', about.titleHighlight || '')}
+        ${field('Párrafo 1', 'about.paragraphs.0', paragraphs[0], 'textarea', true)}
+        ${field('Párrafo 2', 'about.paragraphs.1', paragraphs[1], 'textarea', true)}
+        ${mediaField('Imagen o vídeo', 'about.image', about.image || '')}
       </div>
     </div>
     <div class="admin-card">
       <h3 class="admin-card__title">CTA final</h3>
       <div class="admin-grid">
-        ${field('Etiqueta', 'cta.label', h.cta.label)}
-        ${field('Título', 'cta.title', h.cta.title)}
-        ${field('Destacado', 'cta.titleHighlight', h.cta.titleHighlight)}
-        ${field('Texto', 'cta.text', h.cta.text, 'textarea', true)}
-        ${mediaField('Fondo imagen o vídeo', 'cta.backgroundImage', h.cta.backgroundImage)}
+        ${field('Etiqueta', 'cta.label', h.cta?.label || '')}
+        ${field('Título', 'cta.title', h.cta?.title || '')}
+        ${field('Destacado', 'cta.titleHighlight', h.cta?.titleHighlight || '')}
+        ${field('Texto', 'cta.text', h.cta?.text || '', 'textarea', true)}
+        ${mediaField('Fondo imagen o vídeo', 'cta.backgroundImage', h.cta?.backgroundImage || '')}
       </div>
     </div>`;
   bindFields('panel-home');
@@ -623,11 +655,8 @@ function bindFields(panelId) {
       const clearBtn = urlInput?.closest('.admin-media-field')?.querySelector('[data-clear-media]');
 
       try {
-        const dataUrl = await fileToDataUrl(file);
-        const { url } = await api('/api/upload', {
-          method: 'POST',
-          body: JSON.stringify({ filename: file.name, dataUrl, mimeType: file.type }),
-        });
+        input.disabled = true;
+        const url = await uploadMediaFile(file);
         if (urlInput) urlInput.value = url;
         updateMediaPreviewBox(previewBox, url);
         if (clearBtn) clearBtn.hidden = false;
@@ -635,6 +664,8 @@ function bindFields(panelId) {
         showStatus('success', isVideoUrl(url) ? 'Vídeo subido. Pulsa «Guardar cambios».' : 'Imagen subida. Pulsa «Guardar cambios».');
       } catch (err) {
         showStatus('error', err.message);
+      } finally {
+        input.disabled = false;
       }
     });
   });
@@ -766,6 +797,56 @@ function fileToDataUrl(file) {
     reader.onerror = reject;
     reader.readAsDataURL(file);
   });
+}
+
+async function uploadMediaFile(file) {
+  const maxVideo = 50 * 1024 * 1024;
+  const maxImage = 10 * 1024 * 1024;
+  const isVideo = file.type.startsWith('video/');
+  const maxSize = isVideo ? maxVideo : maxImage;
+
+  if (file.size > maxSize) {
+    const mb = Math.round(maxSize / (1024 * 1024));
+    throw new Error(`Archivo demasiado grande (máx ${mb} MB).`);
+  }
+
+  try {
+    const signed = await api('/api/sign-upload', {
+      method: 'POST',
+      body: JSON.stringify({
+        filename: file.name,
+        mimeType: file.type,
+        size: file.size,
+      }),
+    });
+
+    const uploadRes = await fetch(signed.signedUrl, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': file.type,
+        Authorization: `Bearer ${signed.token}`,
+        'x-upsert': 'true',
+      },
+      body: file,
+    });
+
+    if (!uploadRes.ok) {
+      const errText = await uploadRes.text().catch(() => '');
+      throw new Error(errText || 'No se pudo subir el archivo.');
+    }
+
+    return signed.publicUrl;
+  } catch (err) {
+    if (!/503|Supabase no configurado/i.test(err.message) && file.size <= 4 * 1024 * 1024) {
+      const dataUrl = await fileToDataUrl(file);
+      const { url } = await api('/api/upload', {
+        method: 'POST',
+        body: JSON.stringify({ filename: file.name, dataUrl, mimeType: file.type }),
+      });
+      return url;
+    }
+    throw err;
+  }
 }
 
 function esc(str) {

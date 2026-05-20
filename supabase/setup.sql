@@ -23,7 +23,7 @@ on conflict (id) do update set
   file_size_limit = excluded.file_size_limit,
   allowed_mime_types = excluded.allowed_mime_types;
 
--- Lectura pública
+-- Lectura pública + subida firmada (signed upload URLs)
 drop policy if exists "Public read media" on storage.objects;
 create policy "Public read media"
   on storage.objects for select
@@ -33,3 +33,13 @@ drop policy if exists "Public read content" on storage.objects;
 create policy "Public read content"
   on storage.objects for select
   using (bucket_id = 'content');
+
+drop policy if exists "Allow signed upload media" on storage.objects;
+create policy "Allow signed upload media"
+  on storage.objects for insert
+  with check (bucket_id = 'media');
+
+drop policy if exists "Allow signed update media" on storage.objects;
+create policy "Allow signed update media"
+  on storage.objects for update
+  using (bucket_id = 'media');

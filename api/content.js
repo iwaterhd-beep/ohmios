@@ -75,7 +75,11 @@ export default async function handler(req, res) {
     }
 
     try {
-      const result = await saveContent(file, req.body);
+      const body = typeof req.body === 'string' ? JSON.parse(req.body) : req.body;
+      if (!body || typeof body !== 'object') {
+        return res.status(400).json({ error: 'Datos no válidos' });
+      }
+      const result = await saveContent(file, body);
       const msg = result.storage === 'supabase'
         ? 'Guardado en Supabase. Los cambios son instantáneos.'
         : 'Guardado. Vercel desplegará en ~1 min.';
