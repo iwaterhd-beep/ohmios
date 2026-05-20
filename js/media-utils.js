@@ -31,6 +31,8 @@ export function migrateHeroFields(hero = {}) {
 
 export function bustMediaCache(url) {
   if (!url || url.startsWith('data:')) return url;
+  // URLs remotas (Supabase): sin cache-bust para que Chrome pueda bufferizar bien
+  if (/^https?:\/\//i.test(url)) return url.split('?')[0];
   const base = url.split('?')[0];
   return `${base}?cms=${Date.now()}`;
 }

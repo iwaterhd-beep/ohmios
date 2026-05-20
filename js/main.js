@@ -11,7 +11,7 @@ import { initProjects } from './projects.js';
 import { initForm } from './form.js';
 import { initSchema } from './schema.js';
 import { initCookies } from './cookies.js';
-import { injectPreloader, hidePreloader, initHeroVideo } from './preloader.js';
+import { injectPreloader, hidePreloader, initHeroVideo, hasHeroVideo } from './preloader.js';
 import { initContent } from './content.js';
 
 injectPreloader();
@@ -52,6 +52,9 @@ function setActiveNavLink() {
  */
 function initLenis() {
   if (typeof Lenis === 'undefined') return null;
+
+  // Lenis interfiere con autoplay de vídeo en Chrome
+  if (hasHeroVideo()) return null;
 
   const lenis = new Lenis({
     duration: 1.2,
@@ -164,8 +167,9 @@ async function init() {
   hidePreloader();
   document.body.classList.add('is-loaded');
 
-  initHeroVideo();
-  requestAnimationFrame(() => initHeroVideo());
+  // Reproducir vídeo tras GSAP/Lenis — Chrome necesita el DOM estable
+  setTimeout(() => initHeroVideo(), 100);
+  setTimeout(() => initHeroVideo(), 600);
   window.addEventListener('load', () => initHeroVideo(), { once: true });
 }
 

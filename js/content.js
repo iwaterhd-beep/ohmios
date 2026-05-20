@@ -207,7 +207,6 @@ function applyHeroMedia(hero) {
     video.setAttribute('aria-hidden', 'true');
     media.appendChild(video);
     video.src = url;
-    video.load();
     startHeroVideo(video);
     return;
   }
