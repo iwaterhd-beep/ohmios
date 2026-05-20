@@ -16,10 +16,11 @@
   --color-off-white:    #F5F5F5;
   --color-white:        #FFFFFF;
 
-  --color-electric:     #00AEEF;
-  --color-electric-dim: #0088BB;
-  --color-energy:       #00D084;
-  --color-energy-dim:   #00A868;
+  --color-electric:     #3498DB;
+  --color-electric-dim: #2A7AB8;
+  --color-energy:       #8BC34A;
+  --color-energy-dim:   #6FA832;
+  --color-brand-dark:   #333C4E;
 
   /* ── Gradients ── */
   --gradient-electric:  linear-gradient(135deg, var(--color-electric) 0%, var(--color-energy) 100%);

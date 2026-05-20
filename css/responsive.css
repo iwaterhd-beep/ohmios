@@ -276,6 +276,16 @@
   .hero__badge {
     font-size: 0.625rem;
   }
+
+  .header__logo-img {
+    height: 36px;
+    max-width: 160px;
+  }
+
+  .footer__logo-img {
+    height: 44px;
+    max-width: 180px;
+  }
 }
 
 /* ── Touch Devices ── */
