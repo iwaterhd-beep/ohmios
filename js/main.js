@@ -9,6 +9,8 @@ import { initScrollEffects } from './scroll-effects.js';
 import { initAnimations } from './animations.js';
 import { initProjects } from './projects.js';
 import { initForm } from './form.js';
+import { initSchema } from './schema.js';
+import { initCookies } from './cookies.js';
 
 /**
  * Load HTML component into a placeholder element
@@ -92,6 +94,17 @@ function initServicesNav() {
 }
 
 /**
+ * Load cookie consent banner
+ */
+async function loadCookieBanner() {
+  if (document.getElementById('cookieBanner')) return;
+  const wrapper = document.createElement('div');
+  wrapper.id = 'cookie-placeholder';
+  document.body.appendChild(wrapper);
+  await loadComponent('cookie-placeholder', 'components/cookie-banner.html');
+}
+
+/**
  * Main initialization
  */
 async function init() {
@@ -110,6 +123,7 @@ async function init() {
   }
 
   await loadComponent('footer-placeholder', 'components/footer.html');
+  await loadCookieBanner();
 
   // Register GSAP plugins
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
@@ -126,6 +140,8 @@ async function init() {
   initAnimations();
   initProjects();
   initForm();
+  initSchema();
+  initCookies();
   initServicesNav();
   setActiveNavLink();
 

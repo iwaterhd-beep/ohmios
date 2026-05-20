@@ -1,0 +1,40 @@
+/* Legal pages content styling */
+@import url('about.css');
+
+.legal-content {
+  max-width: 780px;
+  margin-inline: auto;
+}
+
+.legal-content h2 {
+  font-size: var(--text-xl);
+  margin-top: var(--space-2xl);
+  margin-bottom: var(--space-md);
+}
+
+.legal-content h2:first-child {
+  margin-top: 0;
+}
+
+.legal-content p,
+.legal-content li {
+  color: var(--color-gray-400);
+  line-height: var(--leading-relaxed);
+  margin-bottom: var(--space-md);
+}
+
+.legal-content ul {
+  list-style: disc;
+  padding-left: var(--space-lg);
+  margin-bottom: var(--space-lg);
+}
+
+.legal-content a {
+  color: var(--color-electric);
+}
+
+.legal-content .legal-updated {
+  font-size: var(--text-sm);
+  color: var(--color-gray-600);
+  margin-bottom: var(--space-xl);
+}

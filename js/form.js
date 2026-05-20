@@ -1,7 +1,9 @@
 /**
  * OHMIOS ENERGÍA — Contact Form Module
- * Validation and submission handling
+ * Envío real vía FormSubmit → instalaciones.ohmios@gmail.com
  */
+
+import { SITE } from './config.js';
 
 export function initForm() {
   const form = document.getElementById('contactForm');
@@ -13,14 +15,15 @@ export function initForm() {
     message: form.querySelector('[name="message"]'),
   };
 
-  // Clear errors on input
+  const statusEl = document.getElementById('formStatus');
+  const submitBtn = form.querySelector('[type="submit"]');
+  const originalHTML = submitBtn?.innerHTML || '';
+
   Object.values(fields).forEach((input) => {
-    input?.addEventListener('input', () => {
-      clearFieldError(input);
-    });
+    input?.addEventListener('input', () => clearFieldError(input));
   });
 
-  form.addEventListener('submit', (e) => {
+  form.addEventListener('submit', async (e) => {
     e.preventDefault();
 
     let isValid = true;
@@ -40,18 +43,51 @@ export function initForm() {
       isValid = false;
     }
 
-    if (!isValid) return;
+    if (!isValid) {
+      showStatus(statusEl, 'error', 'Revisa los campos marcados antes de enviar.');
+      return;
+    }
 
-    const submitBtn = form.querySelector('[type="submit"]');
-    const originalHTML = submitBtn.innerHTML;
-    submitBtn.innerHTML = 'Enviado ✓';
     submitBtn.disabled = true;
+    submitBtn.innerHTML = 'Enviando…';
+    showStatus(statusEl, '', '');
 
-    setTimeout(() => {
+    const payload = {
+      name: fields.name.value.trim(),
+      email: fields.email.value.trim(),
+      phone: form.querySelector('[name="phone"]')?.value.trim() || '—',
+      service: form.querySelector('[name="service"]')?.value || '—',
+      message: fields.message.value.trim(),
+      _subject: `Nuevo contacto web — ${fields.name.value.trim()}`,
+      _template: 'table',
+      _captcha: 'false',
+    };
+
+    try {
+      const response = await fetch(`https://formsubmit.co/ajax/${SITE.email}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        body: JSON.stringify(payload),
+      });
+
+      if (!response.ok) throw new Error('Error de envío');
+
+      form.reset();
+      submitBtn.innerHTML = 'Enviado ✓';
+      showStatus(statusEl, 'success', 'Mensaje enviado correctamente. Te responderemos en menos de 24 horas.');
+
+      setTimeout(() => {
+        submitBtn.innerHTML = originalHTML;
+        submitBtn.disabled = false;
+      }, 4000);
+    } catch {
       submitBtn.innerHTML = originalHTML;
       submitBtn.disabled = false;
-      form.reset();
-    }, 3000);
+      showStatus(statusEl, 'error', 'No se pudo enviar. Escríbenos a ' + SITE.email + ' o llama al ' + SITE.phone + '.');
+    }
   });
 }
 
@@ -69,4 +105,12 @@ function clearFieldError(input) {
   if (!input) return;
   input.classList.remove('is-error');
   input.closest('.form-group')?.classList.remove('has-error');
+}
+
+function showStatus(el, type, message) {
+  if (!el) return;
+  el.className = 'form-status';
+  if (type) el.classList.add(`form-status--${type}`);
+  el.textContent = message;
+  el.hidden = !message;
 }

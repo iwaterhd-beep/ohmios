@@ -29,11 +29,5 @@
         }
       ]
     }
-  ],
-  "rewrites": [
-    {
-      "source": "/components/:path*",
-      "destination": "/components/:path*"
-    }
   ]
 }

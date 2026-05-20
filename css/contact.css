@@ -132,6 +132,25 @@
   cursor: not-allowed;
 }
 
+.form-status {
+  font-size: var(--text-sm);
+  padding: var(--space-md);
+  border-radius: var(--radius-md);
+  line-height: var(--leading-relaxed);
+}
+
+.form-status--success {
+  background: rgba(0, 208, 132, 0.1);
+  border: 1px solid rgba(0, 208, 132, 0.25);
+  color: var(--color-energy);
+}
+
+.form-status--error {
+  background: rgba(255, 80, 80, 0.08);
+  border: 1px solid rgba(255, 80, 80, 0.25);
+  color: #ff8080;
+}
+
 /* ── Contact Info ── */
 .contact-info {
   display: flex;
