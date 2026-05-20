@@ -9,6 +9,53 @@ import { getFile, saveFile, isGitHubConfigured } from './_lib/github.js';
 const ALLOWED = new Set(['settings', 'home', 'services', 'projects', 'nosotros']);
 const CONTENT_BUCKET = 'content';
 
+function getRequestOrigin(req) {
+  const host = req.headers['x-forwarded-host'] || req.headers.host;
+  const proto = req.headers['x-forwarded-proto'] || 'https';
+  if (host) return `${proto}://${host}`;
+  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
+  return 'https://ohmios.vercel.app';
+}
+
+async function loadStaticDefaults(name, req) {
+  if (isGitHubConfigured()) {
+    try {
+      const file = await getFile(`content/${name}.json`);
+      if (file?.content) return JSON.parse(file.content);
+    } catch {
+      /* fallback */
+    }
+  }
+
+  try {
+    const origin = getRequestOrigin(req);
+    const res = await fetch(`${origin}/content/${name}.json`, { cache: 'no-store' });
+    if (res.ok) return res.json();
+  } catch {
+    /* fallback */
+  }
+
+  return null;
+}
+
+function mergeServicesWithDefaults(data, defaults) {
+  if (!data?.services || !defaults?.services) return data;
+
+  const byId = Object.fromEntries(defaults.services.map((s) => [s.id, s]));
+  return {
+    ...data,
+    services: data.services.map((s) => {
+      const d = byId[s.id];
+      if (!d) return s;
+      return {
+        ...s,
+        navLabel: s.navLabel || d.navLabel || s.title,
+        image: s.image || d.image || '',
+      };
+    }),
+  };
+}
+
 async function loadContent(name) {
   if (isSupabaseConfigured()) {
     try {
@@ -61,7 +108,13 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      const data = await loadContent(file);
+      let data = await loadContent(file);
+
+      if (file === 'services' && data?.services?.some((s) => !s.image)) {
+        const defaults = await loadStaticDefaults('services', req);
+        if (defaults) data = mergeServicesWithDefaults(data, defaults);
+      }
+
       res.setHeader('Cache-Control', 'no-store');
       return res.status(200).json(data);
     } catch (err) {

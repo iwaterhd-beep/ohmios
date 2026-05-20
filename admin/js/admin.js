@@ -130,11 +130,41 @@ async function bootDashboard() {
 
 async function loadJSON(name) {
   const res = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
-  if (res.ok) return res.json();
+  if (res.ok) {
+    const data = await res.json();
+    if (name === 'services') return mergeServicesDefaults(data);
+    return data;
+  }
 
   const fallback = await fetch(`/content/${name}.json?v=${Date.now()}`);
   if (!fallback.ok) throw new Error(`No se pudo cargar ${name}.json`);
   return fallback.json();
+}
+
+async function mergeServicesDefaults(data) {
+  if (!data?.services?.some((s) => !s.image)) return data;
+
+  try {
+    const res = await fetch(`/content/services.json?v=${Date.now()}`);
+    if (!res.ok) return data;
+    const defaults = await res.json();
+    const byId = Object.fromEntries(defaults.services.map((s) => [s.id, s]));
+
+    return {
+      ...data,
+      services: data.services.map((s) => {
+        const d = byId[s.id];
+        if (!d) return s;
+        return {
+          ...s,
+          navLabel: s.navLabel || d.navLabel || s.title,
+          image: s.image || d.image || '',
+        };
+      }),
+    };
+  } catch {
+    return data;
+  }
 }
 
 if (getToken()) {
