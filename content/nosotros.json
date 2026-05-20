@@ -1,0 +1,77 @@
+{
+  "hero": {
+    "label": "Grupo Arkös",
+    "title": "Ingeniería eléctrica con",
+    "titleHighlight": "compromiso real",
+    "subtitle": "Más de una década transformando instalaciones eléctricas en Sevilla y provincia. Profesionalidad, seguridad y eficiencia en cada proyecto."
+  },
+  "intro": {
+    "label": "Nuestra historia",
+    "title": "De la instalación tradicional a la energía del futuro",
+    "paragraphs": [
+      "OHMIOS Energía nace dentro del Grupo Arkös con una visión clara: ofrecer servicios eléctricos completos que combinen la experiencia de la instalación tradicional con las tecnologías más avanzadas en eficiencia energética y renovables.",
+      "Desde nuestras oficinas en Sevilla, atendemos proyectos residenciales, comerciales e industriales con un equipo titulado que garantiza el cumplimiento normativo y la máxima calidad en cada intervención.",
+      "Creemos que cada instalación eléctrica es una oportunidad para construir un futuro más sostenible, eficiente y seguro."
+    ],
+    "image": "https://images.unsplash.com/photo-1581094794329-c8112a89af12?w=800&q=80",
+    "imageAlt": "Equipo de OHMIOS Energía trabajando en instalación eléctrica"
+  },
+  "mission": {
+    "label": "Nuestros pilares",
+    "title": "Misión, visión y valores",
+    "items": [
+      {
+        "title": "Misión",
+        "description": "Proporcionar soluciones eléctricas integrales de máxima calidad, priorizando la seguridad, eficiencia energética y satisfacción del cliente."
+      },
+      {
+        "title": "Visión",
+        "description": "Ser la referencia en ingeniería eléctrica y energías renovables en Andalucía, liderando la transición hacia un modelo energético sostenible."
+      },
+      {
+        "title": "Valores",
+        "description": "Profesionalidad, transparencia, innovación tecnológica y compromiso con la excelencia en cada proyecto que emprendemos."
+      }
+    ]
+  },
+  "timeline": {
+    "label": "Trayectoria",
+    "title": "Nuestra evolución",
+    "items": [
+      {
+        "year": "2012",
+        "title": "Fundación del Grupo Arkös",
+        "description": "Inicio de actividad en el sector de reformas e instalaciones en Sevilla capital."
+      },
+      {
+        "year": "2018",
+        "title": "Expansión a energías renovables",
+        "description": "Integración de instalaciones fotovoltaicas y soluciones de autoconsumo en nuestra cartera de servicios."
+      },
+      {
+        "year": "2022",
+        "title": "Nace OHMIOS Energía",
+        "description": "Creación de la división especializada en ingeniería eléctrica, movilidad eléctrica y eficiencia energética."
+      },
+      {
+        "year": "2026",
+        "title": "+150 proyectos completados",
+        "description": "Consolidación como referente en instalaciones eléctricas y reformas integrales en Sevilla y provincia."
+      }
+    ]
+  },
+  "stats": [
+    { "number": 150, "suffix": "+", "label": "Proyectos completados" },
+    { "number": 12, "suffix": "+", "label": "Años de experiencia" },
+    { "number": 98, "suffix": "%", "label": "Clientes satisfechos" },
+    { "number": 24, "suffix": "h", "label": "Tiempo de respuesta" }
+  ],
+  "cta": {
+    "title": "¿Quieres conocernos mejor?",
+    "text": "Cuéntanos tu proyecto y descubre cómo podemos ayudarte con soluciones eléctricas a medida.",
+    "primaryLabel": "Contactar ahora",
+    "primaryLink": "contacto.html",
+    "secondaryLabel": "Ver servicios",
+    "secondaryLink": "servicios.html"
+  }
+}

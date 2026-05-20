@@ -39,6 +39,10 @@ export async function initContent() {
 
     applySettings(settings);
     if (document.getElementById('hero')) applyHome(home, services, projects);
+    if (document.querySelector('.about-page-intro')) {
+      const nosotros = await fetchJSON('content/nosotros.json');
+      applyNosotrosPage(nosotros);
+    }
     if (document.querySelector('.projects-page__grid')) applyProjectsPage(projects);
     if (document.querySelector('.service-detail')) applyServicesPage(services);
 
@@ -375,6 +379,110 @@ function projectItemHTML(p) {
 
 function applyServicesPage(servicesData) {
   /* Página servicios mantiene HTML estático; el panel edita services.json para la home */
+}
+
+const MISSION_ICONS = [
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>',
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>',
+];
+
+function applyNosotrosPage(data) {
+  if (!data) return;
+
+  const hero = document.querySelector('.page-hero');
+  if (hero && data.hero) {
+    const label = hero.querySelector('.section__label');
+    if (label) label.textContent = data.hero.label;
+    const title = hero.querySelector('.page-hero__title');
+    if (title) title.innerHTML = `${esc(data.hero.title)} <span class="text-gradient">${esc(data.hero.titleHighlight)}</span>`;
+    const subtitle = hero.querySelector('.section__subtitle');
+    if (subtitle) subtitle.textContent = data.hero.subtitle;
+  }
+
+  const intro = document.querySelector('.about-page-intro');
+  if (intro && data.intro) {
+    const textCol = intro.querySelector('.about-page-intro__text');
+    if (textCol) {
+      const label = textCol.querySelector('.section__label');
+      if (label) label.textContent = data.intro.label;
+      const title = textCol.querySelector('.section__title');
+      if (title) title.textContent = data.intro.title;
+      const paragraphs = textCol.querySelectorAll('p');
+      data.intro.paragraphs?.forEach((p, i) => {
+        if (paragraphs[i]) paragraphs[i].textContent = p;
+      });
+    }
+    const visual = intro.querySelector('.about-page-intro__image');
+    if (visual && data.intro.image) {
+      visual.innerHTML = mediaElementHTML(data.intro.image, data.intro.imageAlt || '');
+    }
+  }
+
+  const missionGrid = document.querySelector('.about-mission__grid');
+  const missionHeader = document.querySelector('.about-mission__header');
+  if (data.mission) {
+    if (missionHeader) {
+      const label = missionHeader.querySelector('.section__label');
+      if (label) label.textContent = data.mission.label;
+      const title = missionHeader.querySelector('.section__title');
+      if (title) title.textContent = data.mission.title;
+    }
+    if (missionGrid && data.mission.items) {
+      missionGrid.innerHTML = data.mission.items.map((item, i) => `
+        <article class="mission-card" data-reveal data-cursor="hover">
+          <div class="mission-card__icon">${MISSION_ICONS[i] || MISSION_ICONS[0]}</div>
+          <h3 class="mission-card__title">${esc(item.title)}</h3>
+          <p class="mission-card__desc">${esc(item.description)}</p>
+        </article>`).join('');
+    }
+  }
+
+  const timelineSection = document.querySelector('.about-timeline');
+  if (timelineSection && data.timeline) {
+    const header = timelineSection.querySelector('.container > div');
+    if (header) {
+      const label = header.querySelector('.section__label');
+      if (label) label.textContent = data.timeline.label;
+      const title = header.querySelector('.section__title');
+      if (title) title.textContent = data.timeline.title;
+    }
+    const track = timelineSection.querySelector('.about-timeline__track');
+    if (track && data.timeline.items) {
+      track.innerHTML = data.timeline.items.map((item) => `
+        <article class="timeline-item" data-reveal>
+          <span class="timeline-item__year">${esc(item.year)}</span>
+          <h3 class="timeline-item__title">${esc(item.title)}</h3>
+          <p class="timeline-item__desc">${esc(item.description)}</p>
+        </article>`).join('');
+    }
+  }
+
+  const statsGrid = document.querySelector('.about-stats-banner__grid');
+  if (statsGrid && data.stats) {
+    statsGrid.innerHTML = data.stats.map((stat) => `
+      <div class="about-stats-banner__item" data-reveal>
+        <span class="about-stats-banner__number" data-counter="${stat.number}">0<span>${esc(stat.suffix || '')}</span></span>
+        <span class="about-stats-banner__label">${esc(stat.label)}</span>
+      </div>`).join('');
+  }
+
+  const cta = document.querySelector('.page-cta');
+  if (cta && data.cta) {
+    const title = cta.querySelector('.page-cta__title');
+    if (title) title.textContent = data.cta.title;
+    const text = cta.querySelector('.page-cta__text');
+    if (text) text.textContent = data.cta.text;
+    const buttons = cta.querySelectorAll('.page-cta__actions a');
+    if (buttons[0]) {
+      buttons[0].textContent = data.cta.primaryLabel;
+      if (data.cta.primaryLink) buttons[0].href = data.cta.primaryLink;
+    }
+    if (buttons[1]) {
+      buttons[1].textContent = data.cta.secondaryLabel;
+      if (data.cta.secondaryLink) buttons[1].href = data.cta.secondaryLink;
+    }
+  }
 }
 
 function esc(str) {

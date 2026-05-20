@@ -6,6 +6,7 @@ const TOKEN_KEY = 'ohmios_admin_token';
 const TITLES = {
   settings: 'Configuración general',
   home: 'Página de inicio',
+  nosotros: 'Página Nosotros',
   services: 'Servicios',
   projects: 'Proyectos',
 };
@@ -13,6 +14,7 @@ const TITLES = {
 let state = {
   settings: null,
   home: null,
+  nosotros: null,
   services: null,
   projects: null,
 };
@@ -112,14 +114,15 @@ document.getElementById('logoutBtn')?.addEventListener('click', logout);
 
 // ── Boot ──
 async function bootDashboard() {
-  const [settings, home, services, projects] = await Promise.all([
+  const [settings, home, nosotros, services, projects] = await Promise.all([
     loadJSON('settings'),
     loadJSON('home'),
+    loadJSON('nosotros'),
     loadJSON('services'),
     loadJSON('projects'),
   ]);
 
-  state = { settings, home, services, projects };
+  state = { settings, home, nosotros, services, projects };
   renderAll();
   showDashboardView();
   setLoginLoading(false);
@@ -196,6 +199,7 @@ function renderAll() {
   try {
     renderSettings();
     renderHome();
+    renderNosotros();
     renderServices();
     renderProjects();
   } catch (err) {
@@ -317,6 +321,79 @@ function renderHome() {
       </div>
     </div>`;
   bindFields('panel-home');
+}
+
+function renderNosotros() {
+  const n = state.nosotros;
+  const hero = n.hero;
+  const intro = n.intro;
+  const mission = n.mission;
+  const timeline = n.timeline;
+
+  document.getElementById('panel-nosotros').innerHTML = `
+    <div class="admin-card">
+      <h3 class="admin-card__title">Cabecera de la página</h3>
+      <div class="admin-grid">
+        ${field('Etiqueta', 'nos.hero.label', hero.label)}
+        ${field('Título', 'nos.hero.title', hero.title)}
+        ${field('Título destacado', 'nos.hero.titleHighlight', hero.titleHighlight)}
+        ${field('Subtítulo', 'nos.hero.subtitle', hero.subtitle, 'textarea', true)}
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">Nuestra historia</h3>
+      <div class="admin-grid">
+        ${field('Etiqueta', 'nos.intro.label', intro.label)}
+        ${field('Título', 'nos.intro.title', intro.title)}
+        ${field('Párrafo 1', 'nos.intro.paragraphs.0', intro.paragraphs[0], 'textarea', true)}
+        ${field('Párrafo 2', 'nos.intro.paragraphs.1', intro.paragraphs[1], 'textarea', true)}
+        ${field('Párrafo 3', 'nos.intro.paragraphs.2', intro.paragraphs[2], 'textarea', true)}
+        ${mediaField('Imagen o vídeo', 'nos.intro.image', intro.image)}
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">Misión, visión y valores</h3>
+      <div class="admin-grid">
+        ${field('Etiqueta sección', 'nos.mission.label', mission.label)}
+        ${field('Título sección', 'nos.mission.title', mission.title)}
+        ${mission.items.map((item, i) => `
+          ${field(`Tarjeta ${i + 1} título`, `nos.mission.${i}.title`, item.title)}
+          ${field(`Tarjeta ${i + 1} texto`, `nos.mission.${i}.description`, item.description, 'textarea', true)}
+        `).join('')}
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">Línea de tiempo</h3>
+      <div class="admin-grid">
+        ${field('Etiqueta sección', 'nos.timeline.label', timeline.label)}
+        ${field('Título sección', 'nos.timeline.title', timeline.title)}
+        ${timeline.items.map((item, i) => `
+          ${field(`Hito ${i + 1} año`, `nos.timeline.${i}.year`, item.year)}
+          ${field(`Hito ${i + 1} título`, `nos.timeline.${i}.title`, item.title)}
+          ${field(`Hito ${i + 1} texto`, `nos.timeline.${i}.description`, item.description, 'textarea', true)}
+        `).join('')}
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">Estadísticas</h3>
+      <div class="admin-grid">
+        ${n.stats.map((st, i) => `
+          ${field(`Stat ${i + 1} número`, `nos.stats.${i}.number`, st.number, 'number')}
+          ${field(`Stat ${i + 1} sufijo`, `nos.stats.${i}.suffix`, st.suffix)}
+          ${field(`Stat ${i + 1} etiqueta`, `nos.stats.${i}.label`, st.label, 'text', true)}
+        `).join('')}
+      </div>
+    </div>
+    <div class="admin-card">
+      <h3 class="admin-card__title">CTA final</h3>
+      <div class="admin-grid">
+        ${field('Título', 'nos.cta.title', n.cta.title)}
+        ${field('Texto', 'nos.cta.text', n.cta.text, 'textarea', true)}
+        ${field('Botón principal', 'nos.cta.primaryLabel', n.cta.primaryLabel)}
+        ${field('Botón secundario', 'nos.cta.secondaryLabel', n.cta.secondaryLabel)}
+      </div>
+    </div>`;
+  bindFields('panel-nosotros');
 }
 
 function renderServices() {
@@ -462,6 +539,7 @@ function bindFields(panelId) {
 function collectFormData() {
   if (activeTab === 'settings') collectSettings();
   if (activeTab === 'home') collectHome();
+  if (activeTab === 'nosotros') collectNosotros();
   if (activeTab === 'services') collectServices();
   if (activeTab === 'projects') collectProjects();
 }
@@ -501,6 +579,40 @@ function collectHome() {
   h.cta.titleHighlight = val('cta.titleHighlight');
   h.cta.text = val('cta.text');
   h.cta.backgroundImage = val('cta.backgroundImage');
+}
+
+function collectNosotros() {
+  const n = state.nosotros;
+  n.hero.label = val('nos.hero.label');
+  n.hero.title = val('nos.hero.title');
+  n.hero.titleHighlight = val('nos.hero.titleHighlight');
+  n.hero.subtitle = val('nos.hero.subtitle');
+  n.intro.label = val('nos.intro.label');
+  n.intro.title = val('nos.intro.title');
+  n.intro.paragraphs = [0, 1, 2].map((i) => val(`nos.intro.paragraphs.${i}`));
+  n.intro.image = val('nos.intro.image');
+  n.mission.label = val('nos.mission.label');
+  n.mission.title = val('nos.mission.title');
+  n.mission.items.forEach((item, i) => {
+    item.title = val(`nos.mission.${i}.title`);
+    item.description = val(`nos.mission.${i}.description`);
+  });
+  n.timeline.label = val('nos.timeline.label');
+  n.timeline.title = val('nos.timeline.title');
+  n.timeline.items.forEach((item, i) => {
+    item.year = val(`nos.timeline.${i}.year`);
+    item.title = val(`nos.timeline.${i}.title`);
+    item.description = val(`nos.timeline.${i}.description`);
+  });
+  n.stats.forEach((st, i) => {
+    st.number = parseInt(val(`nos.stats.${i}.number`), 10) || 0;
+    st.suffix = val(`nos.stats.${i}.suffix`);
+    st.label = val(`nos.stats.${i}.label`);
+  });
+  n.cta.title = val('nos.cta.title');
+  n.cta.text = val('nos.cta.text');
+  n.cta.primaryLabel = val('nos.cta.primaryLabel');
+  n.cta.secondaryLabel = val('nos.cta.secondaryLabel');
 }
 
 function collectServices() {

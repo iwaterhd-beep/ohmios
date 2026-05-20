@@ -6,7 +6,7 @@ import {
 } from './_lib/supabase.js';
 import { getFile, saveFile, isGitHubConfigured } from './_lib/github.js';
 
-const ALLOWED = new Set(['settings', 'home', 'services', 'projects']);
+const ALLOWED = new Set(['settings', 'home', 'services', 'projects', 'nosotros']);
 const CONTENT_BUCKET = 'content';
 
 async function loadContent(name) {

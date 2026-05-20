@@ -15,7 +15,7 @@ if (!url || !key) {
 }
 
 const supabase = createClient(url, key);
-const files = ['settings', 'home', 'services', 'projects'];
+const files = ['settings', 'home', 'nosotros', 'services', 'projects'];
 
 for (const name of files) {
   const filePath = path.join('content', `${name}.json`);
