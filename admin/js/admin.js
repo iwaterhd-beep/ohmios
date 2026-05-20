@@ -143,7 +143,17 @@ async function loadJSON(name) {
 
   if (!data && repo) return repo;
   if (!data) throw new Error(`No se pudo cargar ${name}.json`);
+  if (name === 'home' && data.hero) {
+    data.hero = migrateHeroFields({ ...data.hero });
+  }
   return data;
+}
+
+function migrateHeroFields(hero) {
+  if (!hero.backgroundMedia) {
+    hero.backgroundMedia = hero.videoUrl?.trim() || hero.posterUrl?.trim() || '';
+  }
+  return hero;
 }
 
 if (getToken()) {
@@ -237,24 +247,37 @@ function mediaPreviewHTML(url) {
   return `<img class="admin-media-preview" src="${esc(url)}" alt="">`;
 }
 
-function updateMediaPreviewBox(box, url) {
+function updateMediaPreviewBox(box, url, placeholder = '') {
   if (!box) return;
-  box.innerHTML = url ? mediaPreviewHTML(url) : '';
+  box.innerHTML = url
+    ? mediaPreviewHTML(url)
+    : `<span class="admin-media-placeholder">${placeholder || 'Ningún archivo — pulsa «Subir archivo»'}</span>`;
   const video = box.querySelector('video');
   if (video) video.play().catch(() => {});
 }
 
-function mediaField(label, id, url) {
+function mediaField(label, id, url, placeholder = '') {
   const previewId = id.replace(/\./g, '-');
+  const hasMedia = Boolean(url);
   return `
     <div class="admin-field admin-field--full">
       <label class="admin-label">${label}</label>
       <div class="admin-media-field">
-        <div class="admin-media-preview-box" id="${previewId}-preview">${mediaPreviewHTML(url)}</div>
+        <div class="admin-media-preview-box" id="${previewId}-preview">
+          ${hasMedia ? mediaPreviewHTML(url) : `<span class="admin-media-placeholder">${placeholder || 'Ningún archivo — pulsa «Subir archivo»'}</span>`}
+        </div>
         <div class="admin-media-controls">
-          <input class="admin-input" type="url" data-field="${id}" value="${esc(url || '')}" placeholder="URL de imagen o vídeo">
-          <input type="file" accept="image/*,video/mp4,video/webm,video/quicktime" data-upload="${id}" style="margin-top:0.5rem">
-          <small style="color:var(--muted);font-size:0.75rem">Sube imagen (JPG, PNG) o vídeo (MP4, WebM)</small>
+          <input type="hidden" data-field="${id}" value="${esc(url || '')}">
+          <div class="admin-media-actions">
+            <label class="admin-upload-btn">
+              <input type="file" accept="image/jpeg,image/png,image/webp,image/gif,video/mp4,video/webm,video/quicktime" data-upload="${id}" hidden>
+              Subir archivo
+            </label>
+            <button type="button" class="admin-upload-btn admin-upload-btn--ghost" data-clear-media="${id}" ${hasMedia ? '' : 'hidden'}>
+              Quitar
+            </button>
+          </div>
+          <small class="admin-media-hint">Imagen (JPG, PNG, WebP) o vídeo (MP4, WebM). Se sube automáticamente.</small>
         </div>
       </div>
     </div>`;
@@ -305,8 +328,7 @@ function renderHome() {
         ${field('Título línea 3', 'hero.titleLines.2', hero.titleLines[2])}
         ${field('Título línea 4', 'hero.titleLines.3', hero.titleLines[3])}
         ${field('Subtítulo', 'hero.subtitle', hero.subtitle, 'textarea', true)}
-        ${mediaField('Vídeo de fondo', 'hero.videoUrl', hero.videoUrl)}
-        ${mediaField('Imagen de respaldo (opcional, solo JPG/PNG)', 'hero.posterUrl', hero.posterUrl)}
+        ${mediaField('Fondo del hero (foto o vídeo)', 'hero.backgroundMedia', hero.backgroundMedia || hero.videoUrl || hero.posterUrl || '')}
       </div>
     </div>
     <div class="admin-card">
@@ -576,14 +598,29 @@ function bindFields(panelId) {
     });
   });
 
+  panel.querySelectorAll('[data-clear-media]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const id = btn.dataset.clearMedia;
+      const urlInput = panel.querySelector(`[data-field="${id}"]`);
+      const previewBox = panel.querySelector(`#${id.replace(/\./g, '-')}-preview`)
+        || urlInput?.closest('.admin-media-field')?.querySelector('.admin-media-preview-box');
+      const fileInput = panel.querySelector(`[data-upload="${id}"]`);
+      if (urlInput) urlInput.value = '';
+      if (fileInput) fileInput.value = '';
+      updateMediaPreviewBox(previewBox, '');
+      btn.hidden = true;
+    });
+  });
+
   panel.querySelectorAll('[data-upload]').forEach((input) => {
     input.addEventListener('change', async () => {
       const file = input.files?.[0];
       if (!file) return;
       const targetField = input.dataset.upload;
-      const urlInput = document.querySelector(`[data-field="${targetField}"]`);
+      const urlInput = panel.querySelector(`[data-field="${targetField}"]`);
       const previewBox = document.getElementById(`${targetField.replace(/\./g, '-')}-preview`)
         || urlInput?.closest('.admin-media-field')?.querySelector('.admin-media-preview-box');
+      const clearBtn = urlInput?.closest('.admin-media-field')?.querySelector('[data-clear-media]');
 
       try {
         const dataUrl = await fileToDataUrl(file);
@@ -593,7 +630,9 @@ function bindFields(panelId) {
         });
         if (urlInput) urlInput.value = url;
         updateMediaPreviewBox(previewBox, url);
-        showStatus('success', isVideoUrl(url) ? 'Vídeo subido correctamente.' : 'Imagen subida correctamente.');
+        if (clearBtn) clearBtn.hidden = false;
+        input.value = '';
+        showStatus('success', isVideoUrl(url) ? 'Vídeo subido. Pulsa «Guardar cambios».' : 'Imagen subida. Pulsa «Guardar cambios».');
       } catch (err) {
         showStatus('error', err.message);
       }
@@ -624,26 +663,14 @@ function collectSettings() {
   s.gaId = val('gaId');
 }
 
-function normalizeHeroFields(hero) {
-  const videoUrl = hero.videoUrl?.trim() || '';
-  const posterUrl = hero.posterUrl?.trim() || '';
-
-  if (isVideoUrl(posterUrl) && !videoUrl) {
-    hero.videoUrl = posterUrl;
-    hero.posterUrl = '';
-  } else if (isVideoUrl(posterUrl) && isVideoUrl(videoUrl) && posterUrl === videoUrl) {
-    hero.posterUrl = '';
-  }
-}
-
 function collectHome() {
   const h = state.home;
   h.hero.badge = val('hero.badge');
   h.hero.titleLines = [0,1,2,3].map((i) => val(`hero.titleLines.${i}`));
   h.hero.subtitle = val('hero.subtitle');
-  h.hero.videoUrl = val('hero.videoUrl');
-  h.hero.posterUrl = val('hero.posterUrl');
-  normalizeHeroFields(h.hero);
+  h.hero.backgroundMedia = val('hero.backgroundMedia');
+  delete h.hero.videoUrl;
+  delete h.hero.posterUrl;
   h.hero.stats.forEach((_, i) => {
     h.hero.stats[i].number = parseInt(val(`hero.stats.${i}.number`), 10) || 0;
     h.hero.stats[i].suffix = val(`hero.stats.${i}.suffix`);

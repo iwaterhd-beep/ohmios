@@ -9,8 +9,7 @@
     ],
     "gradientFromLine": 2,
     "subtitle": "Instalaciones eléctricas, energías renovables, reformas integrales e iluminación técnica. Soluciones de alto rendimiento para viviendas, empresas e industria.",
-    "videoUrl": "/assets/videos/cms/hero-clinica.mp4",
-    "posterUrl": "",
+    "backgroundMedia": "/assets/videos/cms/hero-clinica.mp4",
     "stats": [
       {
         "number": 150,

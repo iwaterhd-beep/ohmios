@@ -3,7 +3,7 @@
  * Carga JSON del CMS y actualiza la web
  */
 
-import { isVideoUrl, resolveHeroMedia, bustMediaCache } from './media-utils.js';
+import { isVideoUrl, resolveHeroMedia, getHeroBackgroundMedia, migrateHeroFields, bustMediaCache } from './media-utils.js';
 import { initHeroVideo } from './preloader.js';
 
 const ICONS = {
@@ -79,6 +79,9 @@ async function fetchJSON(path) {
 
   if (!data && repo) return repo;
   if (!data) throw new Error(`Failed ${path}`);
+  if (name === 'home' && data.hero) {
+    data = { ...data, hero: migrateHeroFields({ ...data.hero }) };
+  }
   return data;
 }
 
@@ -179,9 +182,13 @@ function applyHeroMedia(hero) {
   const media = document.querySelector('.hero__media');
   if (!media) return;
 
-  const { mode, videoSrc, posterSrc } = resolveHeroMedia(hero);
+  const { mode, src } = resolveHeroMedia(hero);
   media.classList.remove('is-video-active');
   media.innerHTML = '';
+
+  if (!src) return;
+
+  const url = bustMediaCache(src);
 
   if (mode === 'video') {
     const video = document.createElement('video');
@@ -193,36 +200,23 @@ function applyHeroMedia(hero) {
     video.playsInline = true;
     video.autoplay = true;
     video.preload = 'auto';
+    video.setAttribute('webkit-playsinline', '');
     video.setAttribute('aria-hidden', 'true');
-    video.src = bustMediaCache(videoSrc);
-
-    if (posterSrc) {
-      video.poster = bustMediaCache(posterSrc);
-      const fallback = document.createElement('img');
-      fallback.className = 'hero__image hero__image--fallback';
-      fallback.src = bustMediaCache(posterSrc);
-      fallback.alt = '';
-      fallback.loading = 'eager';
-      fallback.fetchPriority = 'high';
-      fallback.setAttribute('aria-hidden', 'true');
-      media.appendChild(fallback);
-    }
-
+    video.src = url;
     media.appendChild(video);
+    media.classList.add('is-video-active');
     return;
   }
 
-  if (mode === 'image') {
-    const img = document.createElement('img');
-    img.className = 'hero__image hero__image--fallback';
-    img.dataset.heroMode = 'image';
-    img.src = bustMediaCache(posterSrc);
-    img.alt = '';
-    img.loading = 'eager';
-    img.fetchPriority = 'high';
-    img.setAttribute('aria-hidden', 'true');
-    media.appendChild(img);
-  }
+  const img = document.createElement('img');
+  img.className = 'hero__image hero__image--fallback';
+  img.dataset.heroMode = 'image';
+  img.src = url;
+  img.alt = '';
+  img.loading = 'eager';
+  img.fetchPriority = 'high';
+  img.setAttribute('aria-hidden', 'true');
+  media.appendChild(img);
 }
 
 function applyAbout(about) {

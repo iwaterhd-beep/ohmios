@@ -19,37 +19,18 @@
 }
 
 .hero__video,
-.hero__image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-}
-
+.hero__image,
 .hero__image--fallback {
   position: absolute;
   inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
   z-index: 0;
-  transition: opacity var(--duration-base) var(--ease-out-expo);
-}
-
-.hero__media.is-video-active .hero__image--fallback {
-  opacity: 0;
-  pointer-events: none;
-}
-
-.hero__video {
-  position: relative;
-  z-index: 1;
-  display: block;
 }
 
 .hero__media.is-video-active .hero__video {
-  opacity: 1;
-}
-
-.hero__image--fallback[style*="display: none"] {
-  opacity: 0;
-  pointer-events: none;
+  z-index: 1;
 }
 
 .hero__overlay {

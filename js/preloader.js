@@ -33,60 +33,23 @@ export function initHeroVideo() {
   const video = media?.querySelector('.hero__video');
   if (!video || video.dataset.heroMode !== 'video') return;
 
-  const fallback = media.querySelector('.hero__image--fallback');
   const prefersReduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
   if (prefersReduced) {
     video.pause();
-    video.style.display = 'none';
     media.classList.remove('is-video-active');
-    if (fallback) fallback.style.display = '';
     return;
   }
 
-  const showVideo = () => {
-    video.style.display = 'block';
-    media.classList.add('is-video-active');
-    if (fallback) fallback.style.display = 'none';
-  };
-
-  const showFallback = () => {
-    video.pause();
-    video.style.display = 'none';
-    media.classList.remove('is-video-active');
-    if (fallback?.src) fallback.style.display = 'block';
-  };
-
-  let attempts = 0;
+  media.classList.add('is-video-active');
+  video.muted = true;
+  video.defaultMuted = true;
 
   const tryPlay = () => {
-    attempts += 1;
-    video.muted = true;
-    video.defaultMuted = true;
-
-    const playPromise = video.play();
-    if (!playPromise) {
-      showVideo();
-      return;
-    }
-
-    playPromise.then(showVideo).catch(() => {
-      if (attempts < 3 && video.readyState < HTMLMediaElement.HAVE_ENOUGH_DATA) {
-        video.addEventListener('canplaythrough', tryPlay, { once: true });
-        return;
-      }
-
-      if (fallback?.src) {
-        showFallback();
-      } else {
-        showVideo();
-      }
+    video.play().catch(() => {
+      video.addEventListener('canplaythrough', () => video.play().catch(() => {}), { once: true });
     });
   };
-
-  video.addEventListener('error', () => {
-    if (fallback?.src) showFallback();
-  }, { once: true });
 
   if (video.readyState >= HTMLMediaElement.HAVE_FUTURE_DATA) {
     tryPlay();
@@ -94,4 +57,5 @@ export function initHeroVideo() {
   }
 
   video.addEventListener('canplay', tryPlay, { once: true });
+  video.addEventListener('loadeddata', tryPlay, { once: true });
 }
