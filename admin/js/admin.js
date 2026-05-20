@@ -130,41 +130,11 @@ async function bootDashboard() {
 
 async function loadJSON(name) {
   const res = await fetch(`/api/content?file=${name}&v=${Date.now()}`);
-  if (res.ok) {
-    const data = await res.json();
-    if (name === 'services') return mergeServicesDefaults(data);
-    return data;
-  }
+  if (res.ok) return res.json();
 
   const fallback = await fetch(`/content/${name}.json?v=${Date.now()}`);
   if (!fallback.ok) throw new Error(`No se pudo cargar ${name}.json`);
   return fallback.json();
-}
-
-async function mergeServicesDefaults(data) {
-  if (!data?.services?.some((s) => !s.image)) return data;
-
-  try {
-    const res = await fetch(`/content/services.json?v=${Date.now()}`);
-    if (!res.ok) return data;
-    const defaults = await res.json();
-    const byId = Object.fromEntries(defaults.services.map((s) => [s.id, s]));
-
-    return {
-      ...data,
-      services: data.services.map((s) => {
-        const d = byId[s.id];
-        if (!d) return s;
-        return {
-          ...s,
-          navLabel: s.navLabel || d.navLabel || s.title,
-          image: s.image || d.image || '',
-        };
-      }),
-    };
-  } catch {
-    return data;
-  }
 }
 
 if (getToken()) {
@@ -193,6 +163,39 @@ document.getElementById('adminNav')?.addEventListener('click', (e) => {
 });
 
 // ── Save ──
+document.getElementById('syncMediaBtn')?.addEventListener('click', async () => {
+  const btn = document.getElementById('syncMediaBtn');
+  const tabs = ['home', 'nosotros', 'services', 'projects'];
+
+  btn.disabled = true;
+  btn.textContent = 'Sincronizando…';
+  document.getElementById('adminStatus').hidden = true;
+
+  try {
+    for (const tab of tabs) {
+      const res = await fetch(`/api/content?file=${tab}&v=${Date.now()}`);
+      if (!res.ok) throw new Error(`No se pudo cargar ${tab}.json`);
+      state[tab] = await res.json();
+    }
+
+    renderAll();
+
+    for (const tab of tabs) {
+      await api(`/api/content?file=${tab}`, {
+        method: 'PUT',
+        body: JSON.stringify(state[tab]),
+      });
+    }
+
+    showStatus('success', '✓ Imágenes de Shopify sincronizadas y guardadas en Supabase.');
+  } catch (err) {
+    showStatus('error', err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Sincronizar imágenes';
+  }
+});
+
 document.getElementById('saveBtn')?.addEventListener('click', async () => {
   const status = document.getElementById('adminStatus');
   const btn = document.getElementById('saveBtn');

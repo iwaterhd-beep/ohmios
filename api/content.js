@@ -1,5 +1,9 @@
 import { verifyToken } from './_lib/auth.js';
 import {
+  mergeContentWithDefaults,
+  needsContentMerge,
+} from './_lib/content-merge.js';
+import {
   isSupabaseConfigured,
   downloadFromStorage,
   uploadJsonToStorage,
@@ -8,6 +12,7 @@ import { getFile, saveFile, isGitHubConfigured } from './_lib/github.js';
 
 const ALLOWED = new Set(['settings', 'home', 'services', 'projects', 'nosotros']);
 const CONTENT_BUCKET = 'content';
+const MERGE_FILES = new Set(['home', 'services', 'projects', 'nosotros']);
 
 function getRequestOrigin(req) {
   const host = req.headers['x-forwarded-host'] || req.headers.host;
@@ -36,24 +41,6 @@ async function loadStaticDefaults(name, req) {
   }
 
   return null;
-}
-
-function mergeServicesWithDefaults(data, defaults) {
-  if (!data?.services || !defaults?.services) return data;
-
-  const byId = Object.fromEntries(defaults.services.map((s) => [s.id, s]));
-  return {
-    ...data,
-    services: data.services.map((s) => {
-      const d = byId[s.id];
-      if (!d) return s;
-      return {
-        ...s,
-        navLabel: s.navLabel || d.navLabel || s.title,
-        image: s.image || d.image || '',
-      };
-    }),
-  };
 }
 
 async function loadContent(name) {
@@ -110,9 +97,9 @@ export default async function handler(req, res) {
     try {
       let data = await loadContent(file);
 
-      if (file === 'services' && data?.services?.some((s) => !s.image)) {
-        const defaults = await loadStaticDefaults('services', req);
-        if (defaults) data = mergeServicesWithDefaults(data, defaults);
+      if (MERGE_FILES.has(file) && needsContentMerge(file, data)) {
+        const defaults = await loadStaticDefaults(file, req);
+        if (defaults) data = mergeContentWithDefaults(file, data, defaults);
       }
 
       res.setHeader('Cache-Control', 'no-store');
