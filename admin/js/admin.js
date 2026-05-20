@@ -402,25 +402,66 @@ function renderServices() {
 
   panel.innerHTML = `
     <div class="admin-card">
-      <h3 class="admin-card__title">Servicios (${items.length})</h3>
-      ${items.map((s, i) => `
-        <div class="admin-list-item" data-service-index="${i}">
-          <div class="admin-list-item__header">
-            <h4>${esc(s.title)}</h4>
-            <label class="admin-checkbox">
-              <input type="checkbox" data-svc="${i}.featured" ${s.featured !== false ? 'checked' : ''}> Visible en home
-            </label>
-          </div>
-          <div class="admin-grid">
-            ${field('Título', `svc.${i}.title`, s.title)}
-            ${field('Número', `svc.${i}.number`, s.number)}
-            ${field('Descripción', `svc.${i}.description`, s.description, 'textarea', true)}
-            ${field('Enlace', `svc.${i}.link`, s.link)}
-          </div>
-        </div>
-      `).join('')}
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:1rem">
+        <h3 class="admin-card__title" style="margin:0;border:0;padding:0">Servicios (${items.length})</h3>
+        <button type="button" class="admin-btn admin-btn--ghost" id="addService">+ Añadir servicio</button>
+      </div>
+      <div id="servicesList">
+        ${items.map((s, i) => serviceItemHTML(s, i)).join('')}
+      </div>
     </div>`;
+
   bindFields('panel-services');
+  bindServiceActions();
+}
+
+function serviceItemHTML(s, i) {
+  return `
+    <div class="admin-list-item" data-service-index="${i}">
+      <div class="admin-list-item__header">
+        <h4>${esc(s.title)}</h4>
+        <div class="admin-list-actions">
+          <label class="admin-checkbox">
+            <input type="checkbox" data-svc="${i}.featured" ${s.featured !== false ? 'checked' : ''}> Visible en home
+          </label>
+          <button type="button" class="admin-btn admin-btn--danger" data-delete-service="${i}">Eliminar</button>
+        </div>
+      </div>
+      <div class="admin-grid">
+        ${field('ID (slug)', `svc.${i}.id`, s.id)}
+        ${field('Título', `svc.${i}.title`, s.title)}
+        ${field('Número', `svc.${i}.number`, s.number)}
+        ${field('Descripción', `svc.${i}.description`, s.description, 'textarea', true)}
+        ${field('Enlace', `svc.${i}.link`, s.link)}
+      </div>
+    </div>`;
+}
+
+function bindServiceActions() {
+  document.getElementById('addService')?.addEventListener('click', () => {
+    collectServices();
+    const n = state.services.services.length + 1;
+    state.services.services.push({
+      id: `servicio-${Date.now()}`,
+      number: String(n).padStart(2, '0'),
+      title: 'Nuevo servicio',
+      description: '',
+      link: 'servicios.html',
+      featured: true,
+    });
+    renderServices();
+  });
+
+  document.querySelectorAll('[data-delete-service]').forEach((btn) => {
+    btn.addEventListener('click', () => {
+      const i = parseInt(btn.dataset.deleteService, 10);
+      if (confirm('¿Eliminar este servicio?')) {
+        collectServices();
+        state.services.services.splice(i, 1);
+        renderServices();
+      }
+    });
+  });
 }
 
 function renderProjects() {
@@ -617,6 +658,7 @@ function collectNosotros() {
 
 function collectServices() {
   state.services.services.forEach((s, i) => {
+    s.id = val(`svc.${i}.id`);
     s.title = val(`svc.${i}.title`);
     s.number = val(`svc.${i}.number`);
     s.description = val(`svc.${i}.description`);
