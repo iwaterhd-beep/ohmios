@@ -51,6 +51,21 @@ body {
   margin-bottom: 2rem;
 }
 
+.admin-brand-logo {
+  display: block;
+  height: 52px;
+  width: auto;
+  max-width: 220px;
+  margin-inline: auto;
+  object-fit: contain;
+}
+
+.admin-brand-logo--compact {
+  height: 36px;
+  max-width: 160px;
+  margin-bottom: 0.5rem;
+}
+
 .admin-login__brand h1 {
   font-family: var(--font-head);
   font-size: 1.5rem;
@@ -105,14 +120,7 @@ body {
   margin-bottom: 1rem;
 }
 
-.admin-sidebar__brand span {
-  font-family: var(--font-head);
-  font-weight: 700;
-  letter-spacing: 0.1em;
-  display: block;
-}
-
-.admin-sidebar__brand small { color: var(--muted); font-size: 0.75rem; }
+.admin-sidebar__brand small { color: var(--muted); font-size: 0.75rem; display: block; }
 
 .admin-nav { display: flex; flex-direction: column; gap: 0.25rem; flex: 1; }
 

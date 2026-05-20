@@ -11,7 +11,8 @@ export const SITE = {
   phoneTel: '+34633968578',
   city: 'Sevilla',
   country: 'España',
-  ogImage: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80',
+  ogImage: 'https://ohmios.vercel.app/assets/images/logo-ohmios.png',
+  logo: '/assets/images/logo-ohmios.png',
   whatsapp: '34633968578',
   /** Google Analytics 4 — pon tu ID: 'G-XXXXXXXXXX' */
   gaId: '',

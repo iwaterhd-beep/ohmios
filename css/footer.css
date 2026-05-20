@@ -55,24 +55,17 @@
 }
 
 .footer__logo {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: var(--space-sm);
   margin-bottom: var(--space-lg);
 }
 
-.footer__logo-mark {
-  width: 36px;
-  height: 36px;
-}
-
-.footer__logo-name {
-  font-family: var(--font-heading);
-  font-size: var(--text-sm);
-  font-weight: 700;
-  letter-spacing: var(--tracking-wider);
-  text-transform: uppercase;
-  color: var(--color-off-white);
+.footer__logo-img {
+  display: block;
+  height: 48px;
+  width: auto;
+  max-width: 200px;
+  object-fit: contain;
 }
 
 .footer__description {

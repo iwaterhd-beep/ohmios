@@ -14,6 +14,8 @@ export function initSchema() {
     name: SITE.name,
     description: 'Instalaciones eléctricas, energías renovables, placas solares y reformas integrales en Sevilla.',
     url: SITE.url,
+    logo: `${SITE.url}${SITE.logo}`,
+    image: SITE.ogImage,
     email: SITE.email,
     telephone: SITE.phone,
     address: {
