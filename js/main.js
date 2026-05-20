@@ -12,6 +12,7 @@ import { initForm } from './form.js';
 import { initSchema } from './schema.js';
 import { initCookies } from './cookies.js';
 import { injectPreloader, hidePreloader, initHeroVideo } from './preloader.js';
+import { initContent } from './content.js';
 
 injectPreloader();
 
@@ -136,6 +137,9 @@ async function init() {
   await loadComponent('footer-placeholder', 'components/footer.html');
   await loadCookieBanner();
   await loadWhatsappFloat();
+
+  // Cargar contenido CMS antes de animaciones
+  await initContent();
 
   // Register GSAP plugins
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {

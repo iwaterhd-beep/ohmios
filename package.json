@@ -2,7 +2,8 @@
   "name": "ohmios-energia",
   "version": "1.0.0",
   "private": true,
-  "description": "OHMIOS Energía — Web corporativa premium",
+  "type": "module",
+  "description": "OHMIOS Energía — Web corporativa premium + CMS",
   "scripts": {
     "dev": "npx serve -l 3456",
     "deploy": "vercel --prod"

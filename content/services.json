@@ -1,0 +1,52 @@
+{
+  "services": [
+    {
+      "id": "electrico",
+      "number": "01",
+      "title": "Instalaciones eléctricas",
+      "description": "Diseño, montaje y legalización de instalaciones eléctricas para viviendas, locales comerciales e industria.",
+      "link": "servicios.html#electrico",
+      "featured": true
+    },
+    {
+      "id": "renovables",
+      "number": "02",
+      "title": "Energías renovables",
+      "description": "Transición energética con soluciones sostenibles que reducen costes y huella de carbono.",
+      "link": "servicios.html#renovables",
+      "featured": true
+    },
+    {
+      "id": "solar",
+      "number": "03",
+      "title": "Placas solares",
+      "description": "Instalación fotovoltaica completa: estudio, montaje, legalización y monitorización de producción.",
+      "link": "servicios.html#solar",
+      "featured": true
+    },
+    {
+      "id": "reformas",
+      "number": "04",
+      "title": "Reformas integrales",
+      "description": "Reformas completas con coordinación de todas las instalaciones: eléctrica, fontanería, climatización y acabados.",
+      "link": "servicios.html#reformas",
+      "featured": true
+    },
+    {
+      "id": "recarga",
+      "number": "05",
+      "title": "Puntos de recarga VE",
+      "description": "Instalación de cargadores para vehículos eléctricos en hogares, parkings y comunidades de propietarios.",
+      "link": "servicios.html#recarga",
+      "featured": true
+    },
+    {
+      "id": "iluminacion",
+      "number": "06",
+      "title": "Iluminación técnica",
+      "description": "Diseño e instalación de sistemas de iluminación LED, domótica y control inteligente de espacios.",
+      "link": "servicios.html#iluminacion",
+      "featured": true
+    }
+  ]
+}

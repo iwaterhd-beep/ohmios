@@ -1,0 +1,66 @@
+{
+  "hero": {
+    "badge": "Grupo Arkös — Sevilla",
+    "titleLines": ["Ingeniería", "eléctrica", "con visión", "de futuro"],
+    "gradientFromLine": 2,
+    "subtitle": "Instalaciones eléctricas, energías renovables, reformas integrales e iluminación técnica. Soluciones de alto rendimiento para viviendas, empresas e industria.",
+    "videoUrl": "https://videos.pexels.com/video-files/3253979/3253979-hd_1920_1080_25fps.mp4",
+    "posterUrl": "https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80",
+    "stats": [
+      { "number": 150, "suffix": "+", "label": "Proyectos completados" },
+      { "number": 12, "suffix": "+", "label": "Años de experiencia" },
+      { "number": 100, "suffix": "%", "label": "Compromiso calidad" }
+    ]
+  },
+  "about": {
+    "label": "Quiénes somos",
+    "title": "Ingeniería eléctrica con",
+    "titleHighlight": "compromiso real",
+    "paragraphs": [
+      "En OHMIOS Energía ofrecemos servicios eléctricos completos para viviendas, empresas e industria. Nos especializamos en instalaciones eléctricas, iluminación, energías renovables, puntos de recarga para vehículos eléctricos y mantenimiento integral.",
+      "Trabajamos con un enfoque en la seguridad, eficiencia energética y calidad, adaptándonos a cada proyecto para ofrecer soluciones modernas y duraderas. Tu instalación eléctrica, en manos de profesionales."
+    ],
+    "image": "https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=800&q=80",
+    "imageAlt": "Técnico eléctrico profesional trabajando en instalación industrial",
+    "badgeNumber": 12,
+    "badgeSuffix": "+",
+    "badgeText": "Años de experiencia en el sector eléctrico",
+    "stats": [
+      { "number": 150, "suffix": "+", "label": "Proyectos ejecutados" },
+      { "number": 98, "suffix": "%", "label": "Clientes satisfechos" },
+      { "number": 24, "suffix": "h", "label": "Respuesta garantizada" }
+    ]
+  },
+  "servicesSection": {
+    "label": "Servicios",
+    "title": "Soluciones técnicas",
+    "titleHighlight": "integrales",
+    "subtitle": "Desde la instalación eléctrica más compleja hasta la integración de energías renovables. Cada servicio diseñado con precisión de ingeniería."
+  },
+  "projectsSection": {
+    "label": "Portfolio",
+    "title": "Proyectos",
+    "titleHighlight": "destacados"
+  },
+  "valuesSection": {
+    "label": "Por qué elegirnos",
+    "title": "Ingeniería que",
+    "titleHighlight": "marca la diferencia",
+    "subtitle": "Cada proyecto se ejecuta con los más altos estándares de calidad, seguridad y eficiencia energética."
+  },
+  "values": [
+    { "title": "Seguridad", "description": "Cumplimiento estricto de normativa REBT y protocolos de seguridad en cada intervención." },
+    { "title": "Eficiencia energética", "description": "Optimizamos cada instalación para reducir consumo y maximizar el rendimiento energético." },
+    { "title": "Tecnología", "description": "Equipamiento de última generación y soluciones inteligentes para el hogar y la industria." },
+    { "title": "Profesionalidad", "description": "Equipo titulado con experiencia demostrada en proyectos residenciales, comerciales e industriales." },
+    { "title": "Garantía total", "description": "Todos nuestros trabajos incluyen garantía por escrito y servicio postventa. Tu tranquilidad es nuestra prioridad.", "wide": true }
+  ],
+  "cta": {
+    "label": "Empecemos",
+    "title": "¿Listo para transformar",
+    "titleHighlight": "tu instalación eléctrica",
+    "titleEnd": "?",
+    "text": "Cuéntanos tu proyecto. Te respondemos en menos de 24 horas con un presupuesto detallado y sin compromiso.",
+    "backgroundImage": "https://images.unsplash.com/photo-1473341304170-971dccb5ac1e?w=1920&q=80"
+  }
+}
