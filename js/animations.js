@@ -33,11 +33,11 @@ function initHeroAnimations() {
   });
 
   const hero = document.getElementById('hero');
-  const heroImage = hero?.querySelector('.hero__image');
+  const heroMedia = hero?.querySelector('.hero__media');
 
-  if (hero && heroImage) {
-    gsap.to(heroImage, {
-      yPercent: 20,
+  if (hero && heroMedia) {
+    gsap.to(heroMedia, {
+      yPercent: 15,
       ease: 'none',
       scrollTrigger: {
         trigger: hero,

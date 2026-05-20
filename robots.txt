@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://ohmios.vercel.app/sitemap.xml

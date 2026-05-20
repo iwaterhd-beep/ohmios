@@ -12,4 +12,7 @@ export const SITE = {
   city: 'Sevilla',
   country: 'España',
   ogImage: 'https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1200&q=80',
+  whatsapp: '34633968578',
+  /** Google Analytics 4 — pon tu ID: 'G-XXXXXXXXXX' */
+  gaId: '',
 };

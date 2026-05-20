@@ -11,6 +11,9 @@ import { initProjects } from './projects.js';
 import { initForm } from './form.js';
 import { initSchema } from './schema.js';
 import { initCookies } from './cookies.js';
+import { injectPreloader, hidePreloader, initHeroVideo } from './preloader.js';
+
+injectPreloader();
 
 /**
  * Load HTML component into a placeholder element
@@ -104,6 +107,14 @@ async function loadCookieBanner() {
   await loadComponent('cookie-placeholder', 'components/cookie-banner.html');
 }
 
+async function loadWhatsappFloat() {
+  if (document.getElementById('whatsappFloat')) return;
+  const wrapper = document.createElement('div');
+  wrapper.id = 'whatsapp-placeholder';
+  document.body.appendChild(wrapper);
+  await loadComponent('whatsapp-placeholder', 'components/whatsapp-float.html');
+}
+
 /**
  * Main initialization
  */
@@ -124,6 +135,7 @@ async function init() {
 
   await loadComponent('footer-placeholder', 'components/footer.html');
   await loadCookieBanner();
+  await loadWhatsappFloat();
 
   // Register GSAP plugins
   if (typeof gsap !== 'undefined' && typeof ScrollTrigger !== 'undefined') {
@@ -143,9 +155,10 @@ async function init() {
   initSchema();
   initCookies();
   initServicesNav();
+  initHeroVideo();
   setActiveNavLink();
 
-  // Remove loading state
+  hidePreloader();
   document.body.classList.add('is-loaded');
 }
 

@@ -270,6 +270,13 @@
     width: 100%;
   }
 
+  .whatsapp-float {
+    bottom: var(--space-lg);
+    right: var(--space-lg);
+    width: 52px;
+    height: 52px;
+  }
+
   .footer__grid {
     grid-template-columns: 1fr;
     gap: var(--space-xl);

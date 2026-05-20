@@ -4,12 +4,25 @@
 <section class="hero" id="hero" aria-label="Presentación principal">
   <!-- Background Media -->
   <div class="hero__media">
+    <video
+      class="hero__video"
+      autoplay
+      muted
+      loop
+      playsinline
+      preload="auto"
+      poster="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80"
+      aria-hidden="true"
+    >
+      <source src="https://videos.pexels.com/video-files/3253979/3253979-hd_1920_1080_25fps.mp4" type="video/mp4">
+    </video>
     <img
-      class="hero__image"
+      class="hero__image hero__image--fallback"
       src="https://images.unsplash.com/photo-1509391366360-2e959784a276?w=1920&q=80"
-      alt="Instalación de placas solares en edificio moderno"
+      alt=""
       loading="eager"
       fetchpriority="high"
+      aria-hidden="true"
     />
   </div>
 
