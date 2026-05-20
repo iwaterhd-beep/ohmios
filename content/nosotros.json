@@ -13,7 +13,7 @@
       "Desde nuestras oficinas en Sevilla, atendemos proyectos residenciales, comerciales e industriales con un equipo titulado que garantiza el cumplimiento normativo y la máxima calidad en cada intervención.",
       "Creemos que cada instalación eléctrica es una oportunidad para construir un futuro más sostenible, eficiente y seguro."
     ],
-    "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/PHOTO-2025-10-20-13-35-29.jpg?v=1766486518&width=1200",
+    "image": "/assets/images/cms/instalaciones-sevilla.jpg",
     "imageAlt": "Instalaciones eléctricas y reformas de OHMIOS Energía en Sevilla"
   },
   "mission": {
@@ -61,10 +61,26 @@
     ]
   },
   "stats": [
-    { "number": 150, "suffix": "+", "label": "Proyectos completados" },
-    { "number": 12, "suffix": "+", "label": "Años de experiencia" },
-    { "number": 98, "suffix": "%", "label": "Clientes satisfechos" },
-    { "number": 24, "suffix": "h", "label": "Tiempo de respuesta" }
+    {
+      "number": 150,
+      "suffix": "+",
+      "label": "Proyectos completados"
+    },
+    {
+      "number": 12,
+      "suffix": "+",
+      "label": "Años de experiencia"
+    },
+    {
+      "number": 98,
+      "suffix": "%",
+      "label": "Clientes satisfechos"
+    },
+    {
+      "number": 24,
+      "suffix": "h",
+      "label": "Tiempo de respuesta"
+    }
   ],
   "cta": {
     "title": "¿Quieres conocernos mejor?",

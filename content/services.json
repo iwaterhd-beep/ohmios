@@ -7,7 +7,7 @@
       "title": "Instalaciones eléctricas",
       "description": "Diseño, montaje y legalización de instalaciones eléctricas para viviendas, locales comerciales e industria.",
       "link": "servicios.html#electrico",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/1748780114309_6800fe8a-5f47-4639-8000-5fc2c38ab992.jpg?v=1767124713&width=1200",
+      "image": "/assets/images/cms/instalacion-electrica.jpg",
       "featured": true
     },
     {
@@ -17,7 +17,7 @@
       "title": "Energías renovables",
       "description": "Transición energética con soluciones sostenibles que reducen costes y huella de carbono.",
       "link": "servicios.html#renovables",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/PHOTO-2025-10-20-13-35-29.jpg?v=1766486518&width=1200",
+      "image": "/assets/images/cms/instalaciones-sevilla.jpg",
       "featured": true
     },
     {
@@ -27,7 +27,7 @@
       "title": "Placas solares",
       "description": "Instalación fotovoltaica completa: estudio, montaje, legalización y monitorización de producción.",
       "link": "servicios.html#solar",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/PHOTO-2025-10-20-13-35-28.jpg?v=1766495607&width=1200",
+      "image": "/assets/images/cms/hero-poster.jpg",
       "featured": true
     },
     {
@@ -37,7 +37,7 @@
       "title": "Reformas integrales",
       "description": "Reformas completas con coordinación de todas las instalaciones: eléctrica, fontanería, climatización y acabados.",
       "link": "servicios.html#reformas",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/1748780327290.jpg?v=1767125033&width=1200",
+      "image": "/assets/images/cms/reforma-vivienda.jpg",
       "featured": true
     },
     {
@@ -47,7 +47,7 @@
       "title": "Puntos de recarga VE",
       "description": "Instalación de cargadores para vehículos eléctricos en hogares, parkings y comunidades de propietarios.",
       "link": "servicios.html#recarga",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/1748780114309_6800fe8a-5f47-4639-8000-5fc2c38ab992.jpg?v=1767124713&width=1200",
+      "image": "/assets/images/cms/instalacion-electrica.jpg",
       "featured": true
     },
     {
@@ -57,7 +57,7 @@
       "title": "Iluminación técnica",
       "description": "Diseño e instalación de sistemas de iluminación LED, domótica y control inteligente de espacios.",
       "link": "servicios.html#iluminacion",
-      "image": "https://grupo-arkos-ohmios-energia.myshopify.com/cdn/shop/files/1748780570953.jpg?v=1767124955&width=1200",
+      "image": "/assets/images/cms/reforma-bano.jpg",
       "featured": true
     }
   ]
