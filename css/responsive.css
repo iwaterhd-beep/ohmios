@@ -162,10 +162,6 @@
     gap: var(--space-lg);
   }
 
-  .hero__scroll {
-    display: none;
-  }
-
   .hero__marquee {
     display: none;
   }
