@@ -1,9 +1,5 @@
 import { verifyToken } from './_lib/auth.js';
 import {
-  mergeContentWithDefaults,
-  needsContentMerge,
-} from './_lib/content-merge.js';
-import {
   isSupabaseConfigured,
   downloadFromStorage,
   uploadJsonToStorage,
@@ -12,36 +8,6 @@ import { getFile, saveFile, isGitHubConfigured } from './_lib/github.js';
 
 const ALLOWED = new Set(['settings', 'home', 'services', 'projects', 'nosotros']);
 const CONTENT_BUCKET = 'content';
-const MERGE_FILES = new Set(['home', 'services', 'projects', 'nosotros']);
-
-function getRequestOrigin(req) {
-  const host = req.headers['x-forwarded-host'] || req.headers.host;
-  const proto = req.headers['x-forwarded-proto'] || 'https';
-  if (host) return `${proto}://${host}`;
-  if (process.env.VERCEL_URL) return `https://${process.env.VERCEL_URL}`;
-  return 'https://ohmios.vercel.app';
-}
-
-async function loadStaticDefaults(name, req) {
-  if (isGitHubConfigured()) {
-    try {
-      const file = await getFile(`content/${name}.json`);
-      if (file?.content) return JSON.parse(file.content);
-    } catch {
-      /* fallback */
-    }
-  }
-
-  try {
-    const origin = getRequestOrigin(req);
-    const res = await fetch(`${origin}/content/${name}.json`, { cache: 'no-store' });
-    if (res.ok) return res.json();
-  } catch {
-    /* fallback */
-  }
-
-  return null;
-}
 
 async function loadContent(name) {
   if (isSupabaseConfigured()) {
@@ -95,13 +61,7 @@ export default async function handler(req, res) {
 
   if (req.method === 'GET') {
     try {
-      let data = await loadContent(file);
-
-      if (MERGE_FILES.has(file) && needsContentMerge(file, data)) {
-        const defaults = await loadStaticDefaults(file, req);
-        if (defaults) data = mergeContentWithDefaults(file, data, defaults);
-      }
-
+      const data = await loadContent(file);
       res.setHeader('Cache-Control', 'no-store');
       return res.status(200).json(data);
     } catch (err) {

@@ -163,39 +163,6 @@ document.getElementById('adminNav')?.addEventListener('click', (e) => {
 });
 
 // ── Save ──
-document.getElementById('syncMediaBtn')?.addEventListener('click', async () => {
-  const btn = document.getElementById('syncMediaBtn');
-  const tabs = ['home', 'nosotros', 'services', 'projects'];
-
-  btn.disabled = true;
-  btn.textContent = 'Sincronizando…';
-  document.getElementById('adminStatus').hidden = true;
-
-  try {
-    for (const tab of tabs) {
-      const res = await fetch(`/api/content?file=${tab}&v=${Date.now()}`);
-      if (!res.ok) throw new Error(`No se pudo cargar ${tab}.json`);
-      state[tab] = await res.json();
-    }
-
-    renderAll();
-
-    for (const tab of tabs) {
-      await api(`/api/content?file=${tab}`, {
-        method: 'PUT',
-        body: JSON.stringify(state[tab]),
-      });
-    }
-
-    showStatus('success', '✓ Imágenes de Shopify sincronizadas y guardadas en Supabase.');
-  } catch (err) {
-    showStatus('error', err.message);
-  } finally {
-    btn.disabled = false;
-    btn.textContent = 'Sincronizar imágenes';
-  }
-});
-
 document.getElementById('saveBtn')?.addEventListener('click', async () => {
   const status = document.getElementById('adminStatus');
   const btn = document.getElementById('saveBtn');

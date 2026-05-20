@@ -176,13 +176,6 @@ body {
   font-size: 1.5rem;
 }
 
-.admin-header__actions {
-  display: flex;
-  align-items: center;
-  gap: 0.75rem;
-  flex-shrink: 0;
-}
-
 .admin-panel { display: none; }
 .admin-panel.is-active { display: block; }
 
@@ -269,15 +262,6 @@ body {
 
 .admin-btn--primary:hover { opacity: 0.9; transform: translateY(-1px); }
 .admin-btn--primary:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
-
-.admin-btn--secondary {
-  background: transparent;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-
-.admin-btn--secondary:hover { border-color: rgba(0,174,239,0.35); color: var(--electric); }
-.admin-btn--secondary:disabled { opacity: 0.5; cursor: not-allowed; }
 
 .admin-btn--ghost {
   background: transparent;
