@@ -54,6 +54,24 @@ body {
 
 .admin-login__brand p { color: var(--muted); font-size: 0.875rem; }
 
+.admin-login__card form {
+  display: flex;
+  flex-direction: column;
+}
+
+.admin-login__card form .admin-label {
+  margin-top: 1rem;
+}
+
+.admin-login__card form .admin-label:first-of-type {
+  margin-top: 0;
+}
+
+.admin-login__card form .admin-btn {
+  margin-top: 1.25rem;
+  width: 100%;
+}
+
 .admin-login__hint {
   margin-top: 1.5rem;
   font-size: 0.75rem;
