@@ -7,6 +7,7 @@ export function initAnimations() {
   if (typeof gsap === 'undefined') return;
 
   initHeroAnimations();
+  initHeroMarqueeScroll();
   initRevealAnimations();
   initCounters();
   initServiceCards();
@@ -47,6 +48,33 @@ function initHeroAnimations() {
       },
     });
   }
+}
+
+/**
+ * Marquee horizontal movement tied to scroll
+ */
+function initHeroMarqueeScroll() {
+  const hero = document.getElementById('hero');
+  const track = hero?.querySelector('.hero__marquee-track');
+  if (!hero || !track || typeof ScrollTrigger === 'undefined') return;
+
+  const group = track.querySelector('.hero__marquee-group');
+  const distance = group ? group.offsetWidth : track.scrollWidth / 2;
+
+  gsap.fromTo(
+    track,
+    { x: 0 },
+    {
+      x: -distance,
+      ease: 'none',
+      scrollTrigger: {
+        trigger: hero,
+        start: 'top bottom',
+        end: 'bottom top',
+        scrub: 1.2,
+      },
+    }
+  );
 }
 
 /**

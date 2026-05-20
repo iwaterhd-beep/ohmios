@@ -290,7 +290,6 @@
 .hero__marquee-track {
   display: flex;
   width: max-content;
-  animation: marqueeScroll 22s linear infinite;
   will-change: transform;
 }
 
@@ -320,15 +319,6 @@
   content: '◆';
   color: var(--color-electric);
   font-size: 8px;
-}
-
-.hero__marquee:hover .hero__marquee-track {
-  animation-play-state: paused;
-}
-
-@keyframes marqueeScroll {
-  from { transform: translate3d(0, 0, 0); }
-  to   { transform: translate3d(-50%, 0, 0); }
 }
 
 /* ============================================================
